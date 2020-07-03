@@ -1,21 +1,21 @@
 //Modules
-var pkg             = require('./package.json');
-var express         = require('express')
-var app             = express()
-var bodyParser      = require('body-parser')
-var mongoose        = require('mongoose')
-var config          = require('./lib/config')
-var path            = require('path')
-var chart           = require('chart.js')
-var cookieParser    = require('cookie-parser')
-var session         = require('express-session')
-var helpers         = require('view-helpers')
-var favicon 		= require('serve-favicon')
-var passport        = require('passport')
-var LocalStrategy   = require('passport-local').Strategy
+var pkg = require('./package.json');
+var express = require('express')
+var app = express()
+var bodyParser = require('body-parser')
+var mongoose = require('mongoose')
+var config = require('./lib/config')
+var path = require('path')
+var chart = require('chart.js')
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+var helpers = require('view-helpers')
+var favicon = require('serve-favicon')
+var passport = require('passport')
+var LocalStrategy = require('passport-local').Strategy
 global.config = config;
 // Service Port
-var port = config.port ||  52720
+var port = config.port || 52720
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -44,15 +44,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // Passport middleware Scope******************************************************************
 app.use(session({
-        secret: 'driveonsecret', 
-        saveUninitialized: false, 
-        resave:false
-        }))
+    secret: 'driveonsecret',
+    saveUninitialized: false,
+    resave: false
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 
 // Configure passport-local to use account model for authentication
-var  User = require('./models/User')
+var User = require('./models/User')
 passport.use(User.createStrategy())
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
@@ -62,8 +62,8 @@ app.use(cookieParser())
 //*********************************************************************************************
 app.use(require('connect-flash')())
 app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res)
-  next()
+    res.locals.messages = require('express-messages')(req, res)
+    next()
 })
 //*********************************************************************************************  
 app.use(helpers('dashboard'))
@@ -72,7 +72,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 // Set Service Scope for Intercharge messages
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     next()
@@ -88,7 +88,7 @@ var notAuthorized = {
     redirect: '/errors/403',
     status: 403
 };
- 
+
 var notAuthenticated = {
     flashType: 'error',
     message: 'Usuário ou senha inválidos',
@@ -98,10 +98,10 @@ var notAuthenticated = {
 app.set('permission', {
     role: 'userProfile',
     notAuthorized: notAuthorized,
-    notAuthenticated: notAuthenticated 
+    notAuthenticated: notAuthenticated
 });
 
 // Set
-app.listen(port, function () {
-    console.log(pkg.name,`listening on http://localhost:${port}`)
+app.listen(process.env.PORT || port, function () {
+    console.log(pkg.name, `listening on http://localhost:${port}`)
 })

@@ -27,12 +27,12 @@ var vehicleController = {}
     
     Vehicle
         .find()
-        .populate({
-          path:'do_dev_m00', 
-          select:'device',
-          match:{ active: true },
-          options: { sort: { device: -1 }}
-        })
+        // .populate({
+        //   path:'do_dev_m00', 
+        //   select:'device',
+        //   match:{ active: true },
+        //   options: { sort: { device: -1 }}
+        // })
         .populate({
           path:'customer', 
           select:'fullname',

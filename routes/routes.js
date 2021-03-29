@@ -32,7 +32,7 @@ router.get('/register', user.register);
 router.post('/register', user.doRegister);
 
 
-router.get('/', isLoggedIn, masterdata.list)
+router.get('/', require('permission')(), isLoggedIn, masterdata.list)
 router.get('/trips', require('permission')(['administrador']), isLoggedIn, masterdata.carlist)
 
 
@@ -84,93 +84,93 @@ router.get('/timeline', isLoggedIn, drivebahavior.timeline)
 
  // ++++++++++++++++++++++ Users CRUD +++++++++++++++++++++++++++
 // List all Users
-router.get('/users',isLoggedIn,  user.list)
+router.get('/users', require('permission')(['administrador','seguradora']),isLoggedIn,  user.list)
 // Get single user by id
-router.get('/users/show/:id',isLoggedIn,  user.show)
+router.get('/users/show/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  user.show)
 // Create user
-router.get('/users/new',isLoggedIn, user.create)
+router.get('/users/new', require('permission')(['administrador','seguradora']),isLoggedIn, user.create)
 // Save user
-router.post('/users/save', isLoggedIn, user.save)
+router.post('/users/save', require('permission')(['administrador','seguradora']), isLoggedIn, user.save)
 // Edit user
-router.get('/users/edit/:id', isLoggedIn,  user.edit)
+router.get('/users/edit/:id', require('permission')(['administrador','seguradora']), isLoggedIn,  user.edit)
 // Edit user
-router.post('/users/update/:id', isLoggedIn, user.update)
+router.post('/users/update/:id', require('permission')(['administrador','seguradora']), isLoggedIn, user.update)
 // Delete
-router.post('/users/delete/:id', isLoggedIn, user.delete)
+router.post('/users/delete/:id', require('permission')(['administrador','seguradora']), isLoggedIn, user.delete)
 
 // ++++++++++++++++++++++ Authority CRUD+++++++++++++++++++++++++++
 
-router.get('/authorities', isLoggedIn,  authority.list)
+router.get('/authorities', require('permission')(['administrador','seguradora']), isLoggedIn,  authority.list)
 
-router.get('/authorities/show/:id', isLoggedIn, authority.show)
+router.get('/authorities/show/:id', require('permission')(['administrador','seguradora']), isLoggedIn, authority.show)
 
-router.get('/authorities/new', isLoggedIn, authority.create)
+router.get('/authorities/new', require('permission')(['administrador','seguradora']),isLoggedIn, authority.create)
 
-router.post('/authorities/save', isLoggedIn, authority.save)
+router.post('/authorities/save', require('permission')(['administrador','seguradora']),isLoggedIn, authority.save)
 
-router.get('/authorities/edit/:id',isLoggedIn, authority.edit)
+router.get('/authorities/edit/:id', require('permission')(['administrador','seguradora']),isLoggedIn, authority.edit)
 
-router.post('/authorities/update/:id',isLoggedIn, authority.update)
+router.post('/authorities/update/:id', require('permission')(['administrador','seguradora']),isLoggedIn, authority.update)
 
-router.post('/authorities/delete/:id',isLoggedIn, authority.delete)
+router.post('/authorities/delete/:id', require('permission')(['administrador','seguradora']),isLoggedIn, authority.delete)
 
 // // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // ++++++++++++++++++++++ Profile +++++++++++++++++++++++++++
 
-router.get('/profiles', isLoggedIn,  profile.list)
+router.get('/profiles', require('permission')(['administrador','seguradora']),isLoggedIn,  profile.list)
 
-router.get('/profiles/show/:id', isLoggedIn,  profile.show)
+router.get('/profiles/show/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  profile.show)
 
-router.get('/profiles/new', isLoggedIn, profile.create)
+router.get('/profiles/new', require('permission')(['administrador','seguradora']),isLoggedIn, profile.create)
 
-router.post('/profiles/save', isLoggedIn,  profile.save)
+router.post('/profiles/save', require('permission')(['administrador','seguradora']),isLoggedIn,  profile.save)
 
-router.get('/profiles/edit/:id', isLoggedIn, profile.edit)
+router.get('/profiles/edit/:id',  require('permission')(['administrador','seguradora']),isLoggedIn, profile.edit)
 
-router.post('/profiles/update/:id',isLoggedIn, profile.update)
+router.post('/profiles/update/:id', require('permission')(['administrador','seguradora']),isLoggedIn, profile.update)
 
-router.post('/profiles/delete/:id',isLoggedIn, profile.delete)
+router.post('/profiles/delete/:id', require('permission')(['administrador','seguradora']),isLoggedIn, profile.delete)
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
  // ++++++++++++++++++++++ customer +++++++++++++++++++++++++++
 
-router.get('/customers', isLoggedIn, customer.list)
+router.get('/customers', require('permission')(['administrador','seguradora']), isLoggedIn, customer.list)
 // Get single user by id
-router.get('/customers/show/:id',isLoggedIn, customer.show)
+router.get('/customers/show/:id', require('permission')(['administrador','seguradora']),isLoggedIn, customer.show)
 // Create user
 router.get('/customers/new',require('permission')(['administrador','seguradora']), isLoggedIn, customer.create)
 // Save user
-router.post('/customers/save',isLoggedIn, customer.save)
+router.post('/customers/save', require('permission')(['administrador','seguradora']),isLoggedIn, customer.save)
 // Edit user
-router.get('/customers/edit/:id',isLoggedIn, customer.edit)
+router.get('/customers/edit/:id', require('permission')(['administrador','seguradora']),isLoggedIn, customer.edit)
 // Edit user
 router.post('/customers/update/:id',require('permission')(['administrador','seguradora']),isLoggedIn,  customer.update)
 // Delete
-router.post('/customers/delete/:id',isLoggedIn, customer.delete)
+router.post('/customers/delete/:id', require('permission')(['administrador','seguradora']),isLoggedIn, customer.delete)
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // ++++++++++++++++++++++ Devices +++++++++++++++++++++++++++
 // List all devices
-router.get('/devices',isLoggedIn, devices.list)
+router.get('/devices', require('permission')(['administrador','seguradora']),isLoggedIn, devices.list)
 // Get single device by id
 router.get('/devices/show/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  devices.show)
 // Create device
-router.get('/devices/new',isLoggedIn,  devices.create)
+router.get('/devices/new', require('permission')(['administrador','seguradora']),isLoggedIn,  devices.create)
 // Save device
-router.post('/devices/save',isLoggedIn,  devices.save)
+router.post('/devices/save', require('permission')(['administrador','seguradora']),isLoggedIn,  devices.save)
 // Edit device
 router.get('/devices/edit/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  devices.edit)
 // Edit device
-router.post('/devices/update/:id',isLoggedIn,  devices.update)
+router.post('/devices/update/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  devices.update)
 // Delete
-router.post('/devices/delete/:id',isLoggedIn, devices.delete)
+router.post('/devices/delete/:id', require('permission')(['administrador','seguradora']),isLoggedIn, devices.delete)
 
-router.get('/devices/setup',isLoggedIn,  devices.setuplist)
+router.get('/devices/setup', require('permission')(['administrador','seguradora']),isLoggedIn,  devices.setuplist)
 
-router.get('/devices/sendcmd/:id',isLoggedIn,  devices.callttvapi)
+router.get('/devices/sendcmd/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  devices.callttvapi)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -216,7 +216,7 @@ router.get('/georisks',require('permission')(['administrador','seguradora']), is
 // Get single georisk by id
 router.get('/georisks/show/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  georisk.show)
 // Create georisk
-router.get('/georisks/new',isLoggedIn,  georisk.create)
+router.get('/georisks/new', require('permission')(['administrador','seguradora']),isLoggedIn,  georisk.create)
 // Save georisk
 router.post('/georisks/save',require('permission')(['administrador','seguradora']), isLoggedIn,  georisk.save)
 // Edit georisk
@@ -229,15 +229,15 @@ router.post('/georisks/delete/:id',require('permission')(['administrador','segur
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // / ++++++++++++++++++++++ Ext. Classes +++++++++++++++++++++++++++
 // List all ECLASS
-router.get('/extclasses',isLoggedIn, eclass.list)
+router.get('/extclasses', require('permission')(['administrador','seguradora']),isLoggedIn, eclass.list)
 // Get single ECLASS by id
-router.get('/extclasses/show/:id',isLoggedIn,  eclass.show)
+router.get('/extclasses/show/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  eclass.show)
 // Create ECLASS
-router.get('/extclasses/new',isLoggedIn,  eclass.create)
+router.get('/extclasses/new', require('permission')(['administrador','seguradora']),isLoggedIn,  eclass.create)
 // Save ECLASS
-router.post('/extclasses/save',isLoggedIn,  eclass.save)
+router.post('/extclasses/save', require('permission')(['administrador','seguradora']),isLoggedIn,  eclass.save)
 // Edit ECLASS
-router.get('/extclasses/edit/:id',isLoggedIn,  eclass.edit)
+router.get('/extclasses/edit/:id', require('permission')(['administrador','seguradora']),isLoggedIn,  eclass.edit)
 // Edit ECLASS
 router.post('/extclasses/update/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  eclass.update)
 // Delete

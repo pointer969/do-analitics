@@ -35,7 +35,7 @@ exports.list = function(req, res){
                 select: 'fullname -_id',
               })              
               .exec(function(err, carss){
-                cars.count().exec(function(err, count){  
+                cars.count().exec(function(err, ccount){  
                     intsvc
                         .find()
                         .limit(limit)
@@ -50,6 +50,7 @@ exports.list = function(req, res){
                                     user: req.user,                              
                                     ulogo: uavatar,
                                     baseuri: baseurl,
+                                    cntcars: ccount,
                                     page: page + 1,
                                     pages: Math.ceil(count / limit)}
                                 )

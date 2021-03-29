@@ -28,7 +28,7 @@ var vehicleController = {}
     Vehicle
         .find()
         .populate({
-          path:'device', 
+          path:'do_dev_m00', 
           select:'device',
           match:{ active: true },
           options: { sort: { device: -1 }}

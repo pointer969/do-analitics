@@ -29,7 +29,7 @@ block content
                             th Ativo                            
                         tbody                                                  
                              each vehicle in list
-                              - var devname = vehicle.device.device;
+                              //- var devname = vehicle.device.device;
                               - var custname = vehicle.customer.fullname;
                               tr
                                 td 
@@ -42,7 +42,7 @@ block content
                                       button(type='submit', style='background-color:transparent; border-color:transparent;')
                                         i.fa.fa-remove  
                                 td #{vehicle.plate}
-                                td #{devname} 
+                                //td #{devname} 
                                 td #{vehicle.vin}
                                 td #{custname}
                                 td #{vehicle.motor} 

@@ -8,8 +8,8 @@ var DO_CAR_GPSSchema = new Schema({
     FBID: String,
     VehicleID: String,
     DriverID: String,
-    ServerTimestamp: String,
-    VehicleTimestamp: String,
+    ServerTimestamp: Date,
+    VehicleTimestamp: Date,
     Long : Number,
     Lat: Number,
     PosText : String,
@@ -17,7 +17,7 @@ var DO_CAR_GPSSchema = new Schema({
     Speed : String,
     KM : String,
     GPSStatus: String,
-    timestamp: String  
+    timestamp: Date  
 },
 {
     timestamps:true

@@ -78,6 +78,7 @@ router.post('/sumGAS', isLoggedIn, message.GASsum)
 // Drive Behavior
 // router.get('/driverbehavior', require('permission')(['administrador','segurado']), isLoggedIn, drivebahavior.list)
 router.get('/driverbehavior', isLoggedIn, drivebahavior.list)
+router.get('/driverbehavior/:id', isLoggedIn, drivebahavior.platedetail)
 router.get('/chartScoreEvolution', isLoggedIn, drivebahavior.scorehistory)
 router.get('/timeline', isLoggedIn, drivebahavior.timeline)
 // router.get('/scorerun',  drivebahavior.scorestub)

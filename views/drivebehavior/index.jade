@@ -109,13 +109,16 @@ block content
                   .card.text-grey.bg-secundary  
                     .card-body.pb-0                  
                         h4.mb-0 
-                          if (veiculos.length > 0) 
-                           - var vei = veiculos[0].FLEETVEHICLE.REGISTRATION;
-                           - var chassi = veiculos[0].FLEETVEHICLE.VEHICLENUMBER;
-                           - var fleetmobile= veiculos[0].FLEETVEHICLE.INSMSISDN;
-                              #VehicleDtl Placa: #{vei} - Mobile : #{fleetmobile} 
+                          if (veiculos) 
+                           - var vei = veiculos[0].plate;
+                           - var chassi = veiculos[0].vin;
+                           - var email = veiculos[0].customer.email;
+                           - var cnpj = veiculos[0].customer.businesscode;
+                              #VehicleDtl Placa: #{vei} 
                               #VehicleDtl1 Chassis: #{chassi}
-                        p Veiculo 
+                              #VehicleDtl2 e-Mail: #{email}
+                              #VehicleDtl3 CNPJ: #{cnpj}
+                        //- p Veiculo 
                     .chart-wrapper.px-3(style='height:45px;')      
             .row
               .col-md-12

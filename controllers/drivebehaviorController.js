@@ -5,7 +5,8 @@ var DriveBehavior   = require('../models/DriveBehavior')
 var Device          = require('../models/Device')
 var Customer        = require('../models/Customer')
 var User            = require('../models/User')
-var cars            = require("../models/VehicleMB")
+var cars = require("../models/VehicleMB")
+var vehicle            = require("../models/Vehicle")
 var carMaintenance  = require ('../models/VehicleMBPrognosis')
 var bcrypt          = require('bcrypt')
 var jwt             = require('jsonwebtoken')
@@ -38,7 +39,7 @@ var drivebehaviorController = {}
                 Carvars.find({active:true}).exec(function(error, idxvars){ 
                   console.log('Carros:' +  carss);                   
                         res.render('drivebehavior/index',
-                        { title: 'DriveOn Integrator | Score', 
+                        { title: 'DriveOn Safe Score | Overall Score', 
                             veiculos: carss,
                             titles: idxvars,
                             user_info: req.user,
@@ -46,6 +47,41 @@ var drivebehaviorController = {}
                         }
                         )                    
                     }) 
+      })
+    })
+    
+  }
+
+  drivebehaviorController.platedetail = function(req, res) {   
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.id;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+  
+    console.log('_id:' +  _id);  
+  User
+    .findOne({email:req.user.email}).exec(function(err, user){  
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path:'customer'
+        })
+      .exec(function(err, carss){    
+             //   Carvars.find({active:true}).exec(function(error, idxvars){ 
+                  console.log('Carro:' +  carss);                   
+                        res.render('drivebehavior/index',
+                        { title: 'DriveOn Safe Score | Overall Score', 
+                            veiculos: carss,
+                           // titles: idxvars,
+                            user_info: req.user,
+                            baseuri: baseurl
+                        }
+                        )                    
+                //    }) 
       })
     })
     

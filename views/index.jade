@@ -5,7 +5,7 @@ block header
   script(src='/bower_components/chart.js/dist/Chart.min.js').
 
 block content
-  - var ucustomer = user.customer;  
+  - var ucustomer = user.customer;   
   -function prettyDate(dateString){
     //if it's already a date object and not a string you don't need this line:
     -var date = new Date(dateString);
@@ -586,43 +586,78 @@ block content
                       //-           canvas#sparkline-chart-6(width='100', height='30')
                       //-     // /.col                        
                     br
-                  if (services) 
+                  //- if (services) 
+                  //-   table.table.table-responsive.table-hover.table-outline.mb-0
+                  //-     thead.thead-default
+                  //-       tr
+                  //-         //- th.text-center
+                  //-         //-   i.icon-th-large
+                  //-         //- th Area
+                  //-         th.text-center Serviço
+                  //-         th.text-center Descrição
+                  //-         th.text-center Status
+                  //-         th.text-center Registros
+                  //-         th.text-center Ultima Execução
+                  //-     tbody                      
+                  //-       each srvc in services
+                  //-         - var cln = 0
+                  //-         - var narea = srvc.Area
+                  //-         - var nservice = srvc.services
+                  //-         - var ndesc = srvc.description
+                  //-         - var nstatus = srvc.status
+                  //-         - var crecords = srvc.records
+                  //-         - var nlexecution = srvc.last_run
+                  //-         tr
+                            
+                  //-           //- td
+                  //-             div 
+                  //-               a(href='/analytics') #{cln++}
+                  //-             //- .small.text-muted
+                  //-               span Registrado: #{prettyDate(carro.createdAt)}
+                  //-           //- td.text-center                              
+                  //-             span #{narea}
+                  //-           td.text-left                              
+                  //-             span #{nservice}      
+                  //-           td.text-left                              
+                  //-             span #{ndesc}   
+                  //-           td.text-center
+                  //-             .avatar                                
+                  //-               //- img.img-avatar(src='img/avatars/4.jpg', alt=uemail)
+                  //-               if (nstatus =='on')
+                  //-                   span.avatar-status.badge-success  
+                  //-               else
+                  //-                   span.avatar-status.badge-error  
+                  //-           td.text-center                              
+                  //-             span #{crecords}    
+                  //-           td.text-center                              
+                  //-             span #{nlexecution}                          
+                  //-   if (pages > 1)
+                  //-     ul.pagination
+                  //-       != createPagination(pages, page)
+                  if (carros) 
                     table.table.table-responsive.table-hover.table-outline.mb-0
                       thead.thead-default
                         tr
-                          //- th.text-center
-                          //-   i.icon-th-large
-                          //- th Area
-                          th.text-center Serviço
-                          th.text-center Descrição
+                          th.text-center Placa
+                          th.text-center Freet Id
                           th.text-center Status
                           th.text-center Registros
                           th.text-center Ultima Execução
                       tbody                      
-                        each srvc in services
+                        each srvc in carros
                           - var cln = 0
-                          - var narea = srvc.Area
-                          - var nservice = srvc.services
-                          - var ndesc = srvc.description
-                          - var nstatus = srvc.status
-                          - var crecords = srvc.records
-                          - var nlexecution = srvc.last_run
+                          - var nplate = srvc.plate
+                          - var nservice = srvc.vin
+                          - var nstatus = 'on'
+                          - var crecords = ''
+                          - var nlexecution = ''
                           tr
-                            
-                            //- td
-                              div 
-                                a(href='/analytics') #{cln++}
-                              //- .small.text-muted
-                                span Registrado: #{prettyDate(carro.createdAt)}
-                            //- td.text-center                              
-                              span #{narea}
-                            td.text-left                              
-                              span #{nservice}      
-                            td.text-left                              
-                              span #{ndesc}   
+                            td.text-center                              
+                              a(href='/drivebehavior/#{nplate}') #{nplate}
+                            td.text-center                              
+                              span #{nservice}  
                             td.text-center
                               .avatar                                
-                                //- img.img-avatar(src='img/avatars/4.jpg', alt=uemail)
                                 if (nstatus =='on')
                                     span.avatar-status.badge-success  
                                 else

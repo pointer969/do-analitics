@@ -20,8 +20,8 @@ exports.list = function(req, res){
     var lastday = new Date(curr.setDate(last)).toLocaleDateString('pt-BR');
 
     const options = {
-      limit: limit,
-      page: page
+      limit: 5,
+      page: 1
     };
   
     var uavatar = getInitials(req.user.fullname);       
@@ -29,33 +29,35 @@ exports.list = function(req, res){
     User
       .findOne({email:req.user.email}).exec(function(err, user){ 
           cars
-              .find({customer:user.customer})
+              .find({ customer: user.customer })
+              .limit(limit)
+              .skip(limit * page)
               .populate({
                 path: 'customer',
                 select: 'fullname -_id',
               })              
               .exec(function(err, carss){
                 cars.count().exec(function(err, ccount){  
-                    intsvc
-                        .find()
-                        .limit(limit)
-                        .skip(limit * page)
-                        .exec(function(err,svcs){
-                            intsvc.count().exec(function(err, count){    
+                    // intsvc
+                    //     .find()
+                    //     .limit(limit)
+                    //     .skip(limit * page)
+                    //     .exec(function(err,svcs){
+                    //         intsvc.count().exec(function(err, count){    
                                 res.render('index',
                                 { title: 'DriveOn Safe Score',
                                     params:{CurWStart:firstday, CurWEnd:lastday},  
                                     carros: carss,
-                                    services: svcs,
+                                    // services: svcs,
                                     user: req.user,                              
                                     ulogo: uavatar,
                                     baseuri: baseurl,
                                     cntcars: ccount,
                                     page: page + 1,
-                                    pages: Math.ceil(count / limit)}
+                                    pages: Math.ceil(ccount / limit)}
                                 )
-                            })    
-                        })                 
+                        //     })    
+                        // })                 
                          
                            
                   })      

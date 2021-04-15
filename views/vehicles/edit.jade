@@ -24,17 +24,17 @@ block content
                           .controls
                             .input-group
                               input#plate.form-control(name='plate',size='100', type='text', value='#{vehicles.plate}', readonly=false)
-                        if (devices)      
-                          .form-group
-                            label.form-control-label(for='profilelbl') Device
-                            .controls
-                              .input-group
-                                select#select.form-control-sm(name='device')
-                                  - var vehicldevice = vehicles.device.device;                              
-                                  each device in devices
-                                    - var devid = device.id;
-                                    - var devnm = device.device;
-                                    option(value=devid, selected= vehicldevice==devnm) #{devnm}  
+                        //- if (devices)      
+                        //-   .form-group
+                        //-     label.form-control-label(for='profilelbl') Device
+                        //-     .controls
+                        //-       .input-group
+                        //-         select#select.form-control-sm(name='device')
+                        //-           - var vehicldevice = vehicles.device.device;                              
+                        //-           each device in devices
+                        //-             - var devid = device.id;
+                        //-             - var devnm = device.device;
+                        //-             option(value=devid, selected= vehicldevice==devnm) #{devnm}  
                         if (customers)             
                           .form-group
                             label.form-control-label(for='profilelbl') Conta

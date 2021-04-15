@@ -43,7 +43,7 @@ exports.list = function(req, res){
                         .exec(function(err,svcs){
                             intsvc.count().exec(function(err, count){    
                                 res.render('index',
-                                { title: 'DriveOn Integrator',
+                                { title: 'DriveOn Safe Score',
                                     params:{CurWStart:firstday, CurWEnd:lastday},  
                                     carros: carss,
                                     services: svcs,

@@ -154,7 +154,8 @@ block content
               .col-md-12
                 .chart-wrapper
                   a
-                    button.btn.btn-sm.secondary(type='button') '18/10/2020 
+                    - var dtime = timeline;
+                    button.btn.btn-sm.secondary(type='button') #{ dtime }
             .row
               .col-md-12
                   .card

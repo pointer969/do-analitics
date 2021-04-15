@@ -7,7 +7,7 @@ var Customer        = require('../models/Customer')
 var User            = require('../models/User')
 var cars = require("../models/VehicleMB")
 var vehicle            = require("../models/Vehicle")
-var carMaintenance  = require ('../models/VehicleMBPrognosis')
+var carMaintenance = require('../models/VehicleMBPrognosis')
 var bcrypt          = require('bcrypt')
 var jwt             = require('jsonwebtoken')
 var config          = require('../lib/config')
@@ -61,8 +61,7 @@ var drivebehaviorController = {}
       limit: limit,
       page: page
     };
-  
-    console.log('_id:' +  _id);  
+   
   User
     .findOne({email:req.user.email}).exec(function(err, user){  
       vehicle
@@ -71,17 +70,16 @@ var drivebehaviorController = {}
           path:'customer'
         })
       .exec(function(err, carss){    
-             //   Carvars.find({active:true}).exec(function(error, idxvars){ 
-                  console.log('Carro:' +  carss);                   
+                       var dateTimeLine = datesByCar(carss[0].vin)     
                         res.render('drivebehavior/index',
                         { title: 'DriveOn Safe Score | Overall Score', 
                             veiculos: carss,
-                           // titles: idxvars,
+                            timeline: dateTimeLine,
                             user_info: req.user,
                             baseuri: baseurl
                         }
                         )                    
-                //    }) 
+              
       })
     })
     
@@ -223,7 +221,9 @@ var drivebehaviorController = {}
       })
     })
     
-    }
+  }
+  
+
 
 
 
@@ -232,4 +232,56 @@ module.exports = drivebehaviorController
 function randomIntFromInterval(min,max) // min and max included
 {
     return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function datesByCar (chassi) {
+  cars
+      .find({CHASSIS: chassi})
+      .exec(function (err, vehicleInfo) {
+        var carId = vehicleInfo[0].inoid;
+      
+        mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+          collection.find({ vehicleID: carId }).toArray(function (err, scores) {
+            console.log('carId=' + carId + 'scores=>' + JSON.stringify(scores))
+            var dateTimeline = []
+            for (var i = 0; i < scores.length; i++) {
+              var dtime = moment(scores[i].Date, "YYYY-MM-DD").format("DD-MM-YYYY");
+              var dsend = dtime.substring(0, 10);
+              dateTimeline.push(dsend)
+            }
+            return (dateTimeline)
+          });
+      });
+   })
+}
+
+function scorebyCar (chassi, dtime) {
+  var Slot3 = 0;
+  cars
+      .find({CHASSIS: chassi})
+      .exec(function (err, vehicleInfo) {
+        var carId = vehicleInfo[0].inoid;
+      
+        mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+          collection.find({ vehicleID: carId, Date: dtime }).toArray(function (err, scores) {
+            console.log('carId=' + carId + 'scores=>' + JSON.stringify(scores))
+            var dateTimeline = []
+            /* Slot Mecanico */
+            var OilLevelScore = 10;
+            var AirFilterConditionScore = 10;
+            var FaltyBulbsScore = 10;
+            var NightDrivingHoursScore = 10;
+            for (var i = 0; i < scores.length; i++) {
+              OilLevelScore = (OilLevelScore + scores[i].OilLevelScore) / 2;
+              AirFilterConditionScore = (AirFilterConditionScore + scores[i].AirFilterConditionScore) / 2;
+              FaltyBulbsScore = (FaltyBulbsScore + scores[i].FaltyBulbsScore) / 2;
+              NightDrivingHoursScore = (NightDrivingHoursScore + scores[i].NightDrivingHoursScore) / 2;
+            }
+
+            Slot3 = (OilLevelScore + AirFilterConditionScore + FaltyBulbsScore + NightDrivingHoursScore) / 4;
+
+            return (Slot3)
+          });
+      });
+   })
 }

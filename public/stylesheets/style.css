@@ -1371,7 +1371,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   white-space: nowrap;
   vertical-align: middle;
   user-select: none;
-  border: 1px solid transparent;
+  border: 1px solid #20a8d8;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.25;

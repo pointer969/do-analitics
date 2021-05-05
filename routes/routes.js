@@ -79,9 +79,13 @@ router.post('/sumGAS', isLoggedIn, message.GASsum)
 // router.get('/driverbehavior', require('permission')(['administrador','segurado']), isLoggedIn, drivebahavior.list)
 router.get('/driverbehavior', isLoggedIn, drivebahavior.list)
 router.get('/driverbehavior/:id', isLoggedIn, drivebahavior.platedetail)
+router.get('/driverbehavior/:id/:ddate', isLoggedIn, drivebahavior.platedetail)
 router.get('/chartScoreEvolution', isLoggedIn, drivebahavior.scorehistory)
 router.get('/timeline', isLoggedIn, drivebahavior.timeline)
 // router.get('/scorerun',  drivebahavior.scorestub)
+router.get('/driverbehavior/score/slot3/roadduration/:plateid/:setDate', isLoggedIn, drivebahavior.slot3RoadDurationScore)
+router.get('/driverbehavior/score/slot3/roadlong/:plateid/:setDate', isLoggedIn, drivebahavior.slot3RoadLongScore)
+router.get('/driverbehavior/score/slot3/motortemp/:plateid/:setDate', isLoggedIn, drivebahavior.slot3MotorTemperatureScore)
 
  // ++++++++++++++++++++++ Users CRUD +++++++++++++++++++++++++++
 // List all Users

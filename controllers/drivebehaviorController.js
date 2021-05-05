@@ -13,9 +13,7 @@ var jwt             = require('jsonwebtoken')
 var config          = require('../lib/config')
 var async           = require('run-async')
 var Carvars         = require('../models/Calcvar')
-var Score           = require('../models/Score')
-var dataref         = require('moment')
-var position        = require('../models/VehicleMBPositions')
+var vehiclePosition        = require('../models/VehicleMBHeaderPositions')
 var moment          = require("moment");
 var unid            = require("uuid/v4");
 var drivebehaviorController = {}
@@ -56,33 +54,43 @@ var drivebehaviorController = {}
     var baseurl = req.protocol + "://" + req.get('host') + "/"    
     var page = (req.query.page > 0 ? req.query.page : 1) - 1;
     var _id = req.params.id;
+    var drun = req.params.ddate;
     var limit = 10;
     var options = {
       limit: limit,
       page: page
     };
-   
-  User
-    .findOne({email:req.user.email}).exec(function(err, user){  
-      vehicle
-        .find({ plate: _id })
-        .populate({
-          path:'customer'
-        })
-      .exec(function(err, carss){    
-                       var dateTimeLine = datesByCar(carss[0].vin)     
-                        res.render('drivebehavior/index',
-                        { title: 'DriveOn Safe Score | Overall Score', 
-                            veiculos: carss,
-                            timeline: dateTimeLine,
-                            user_info: req.user,
-                            baseuri: baseurl
-                        }
-                        )                    
-              
-      })
-    })
     
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;              
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                
+                collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
+                  res.render('drivebehavior/index',
+                    {
+                      title: 'DriveOn Safe Score | Overall Score',
+                      veiculos: carss,
+                      timeline: daysLine,
+                      user_info: req.user,
+                      dSet: drun,
+                      baseuri: baseurl
+                    })
+                })
+              })
+          })
+        })
+      })
   }
 
   drivebehaviorController.timeline = function(req, res){
@@ -115,7 +123,8 @@ var drivebehaviorController = {}
       } 
       res.json(arrayMessage)  
     })
-  }
+ }
+  
   drivebehaviorController.scorehistory =  function(req, res) { 
     
        // Message.find({'dongleCode':dongleCode,'eventcode':{'$ne':'0220'}}).sort({$natural :1}).limit(5).exec(function (err, message) {
@@ -222,11 +231,168 @@ var drivebehaviorController = {}
     })
     
   }
+
+drivebehaviorController.OverAllScore = function (req, res) {
+    
+    mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+      collection.find({ vehicleID: carId }).exec((overllScore) => {
+        if (overllScore) {
+                 
+        } else {
+          res.JSON({score: 0.0})
+        }
+      })
+    })
   
+  }
 
+drivebehaviorController.slot3RoadDurationScore = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
 
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ KM : 1}, function (err, carPosition) {
+                if (!err) {
+                    if (carPosition) {
+                      var KMRoad = [];
+                      for (var i = 0; i< carPosition.length; i++){
+                        if (carPosition[i])
+                          KMRoad.push(carPosition[i].KM);
+                      }
+                      var KmEnd  = Number.NEGATIVE_INFINITY,
+                          kmIni = Infinity;
 
+                      KMRoad.forEach(function(item){
+                        if (Number(item) > KmEnd) KmEnd = item;
+                        if (Number(item) < kmIni) kmIni = item;
+                      });
+                      var KmRodados = KmEnd - kmIni;
+                      res.json({ score: 10, valorBase: KmRodados })
+                    } else {
+                      res.json({ score: 0 })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+   
+}
 
+drivebehaviorController.slot3RoadLongScore = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ timestamp : 1}, function (err, carPosition) {
+                if (!err) {
+                    if (carPosition) {
+                      var HoursRoad = [];
+                      for (var i = 0; i< carPosition.length; i++){
+                        if (carPosition[i])
+                          HoursRoad.push(carPosition[i].timestamp);
+                      }
+
+                      var dateRoaded = HoursRoad.map(d => moment(d,"dd/mm/yyyy hh24:mi:ss"));
+                      var maxDate = moment.max(dateRoaded);
+                      var minDate = moment.min(dateRoaded);
+                      var duration = moment.duration(maxDate.diff(minDate));
+                      res.json({ score: 10, valorBase: duration.asHours() })
+                    } else {
+                      res.json({ score: 0 })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+   
+}
+
+drivebehaviorController.slot3MotorTemperatureScore = function (req, res) {
+  
+  
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.plateid;
+    var runDate = req.params.setDate;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+    
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate,"YYYYMMDD").toDate();
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  console.log('carId=' + carId + ' dtimestamp=>' + dtimestamp + ' runDate=>'+ runDate);
+                  collection.find({ vehicleID: carId, Date: { "$gte" : dtimestamp} }).toArray(function (err, slot3MotorTempo) {
+                    if (!err) {
+                      if (slot3MotorTempo) {
+                        
+                        var Slot3Result = 0;
+                        var Slot3TempDump = [];
+                        slot3MotorTempo.forEach((motor, index) =>
+                          //Slot3TempDump.push(motor.MechanicalScore.EngineBlockTemp)
+                          console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
+                        );
+                        console.log('Slot3TempDump=>' + Slot3TempDump);
+                        Slot3Result = Slot3TempDump => Slot3TempDump.reduce((prev, curr) => prev + curr) / Slot3TempDump.length;
+                        res.json({ score: 10, valorBase: Slot3Result });
+                      } else {
+                        res.json({ score: 0 });
+                      }  
+                    } else {
+                      console.log('Error:' + err);
+                      res.json({ score: -1 });
+                    }
+                    
+                  })  
+                } else {
+                  console.log('Error:' + err);
+                }               
+              })
+          })
+        })
+      })
+}
 module.exports = drivebehaviorController
 
 function randomIntFromInterval(min,max) // min and max included
@@ -241,13 +407,16 @@ function datesByCar (chassi) {
         var carId = vehicleInfo[0].inoid;
       
         mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
-          collection.find({ vehicleID: carId }).toArray(function (err, scores) {
-            console.log('carId=' + carId + 'scores=>' + JSON.stringify(scores))
+          collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
+            //console.log('carId=' + carId + ' daysLine=>' + JSON.stringify(daysLine))
             var dateTimeline = []
-            for (var i = 0; i < scores.length; i++) {
-              var dtime = moment(scores[i].Date, "YYYY-MM-DD").format("DD-MM-YYYY");
-              var dsend = dtime.substring(0, 10);
-              dateTimeline.push(dsend)
+            for (var i = 0; i < daysLine.length; i++) {
+              //console.log('daysLine[i].Date=' + moment(daysLine[i]) + ' Momento Status=>' +  moment(daysLine[i]).isValid())
+              if (moment(daysLine[i]).isValid()) {
+                var dtime = moment(daysLine[i]).format("DD/MM/YYYY");
+                //console.log('dtime=' + dtime)
+                dateTimeline.push(dtime)
+              }
             }
             return (dateTimeline)
           });

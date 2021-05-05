@@ -120,6 +120,11 @@ $(document).ready(function($){
     e.preventDefault();
   });
 
+  $('.scorereload').click(function(){
+    getRefreshSlo3RoadDuration();
+    getRefreshSlo3RoadLong();
+    getRefreshSlo3MotorTemp();
+  });
 });
 
 /****
@@ -143,6 +148,25 @@ $(document).on('click', '.card-actions a', function(e){
     $('#myModal').modal('show');
   }
 
+  
+  // /* Load Score Indicators */
+  // var dInfo = $(this).val();
+  //   var dplate = $('#VehicleDtl').val();
+  //   console.log("dInfo =" + dInfo + " dplate=" + dplate);
+  //   $.ajax
+  //     ({
+  //       type: "get",
+  //       url: "/driverbehavior/score/slot3/roadduration/",
+  //       data: {
+  //         plateid: dplate,
+  //         setDate: dInfo
+  //       },
+  //       dataType: "json",
+  //       crossDomain: "false",
+  //       contentType: "application/json; charset=UTF-8"                                                             
+  //     }).done(function ( data ) {
+  //       $('#slot3roadDurationScore').html( data );
+  //     })
 });
 
 function capitalizeFirstLetter(string) {
@@ -179,3 +203,68 @@ function init(url) {
 //           $('#userList table tbody').html(tableContent);
 //       });
 // }
+
+function getRefreshSlo3RoadDuration() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/roadduration/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3roadDurationScore').html( data.valorBase + ' metros' );
+        } else {
+          $('#slot3roadDurationScore').html( "Sem dados" );
+        }
+        
+      })
+}
+function getRefreshSlo3RoadLong() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/roadlong/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3roadLongScore').html( Math.round(data.valorBase,2) + '  Horas' );
+        } else {
+          $('#slot3roadLongScore').html( "Sem dados" );
+        }
+        
+      })
+  }
+
+  function getRefreshSlo3MotorTemp() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/motortemp/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3motorTempScore').html( Math.round(data.valorBase,2) + '  Celsius' );
+        } else {
+          $('#slot3motorTempScore').html( "Sem dados" );
+        }
+        
+      })
+  }

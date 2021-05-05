@@ -359,23 +359,143 @@ drivebehaviorController.slot3MotorTemperatureScore = function (req, res) {
             .find({ CHASSIS: carss[0].vin })
             .exec(function (err, vehicleInfo) {
               var carId = vehicleInfo[0].inoid;
-              var dtimestamp = moment(runDate,"YYYYMMDD").toDate();
+              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toISOString();
+              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toISOString();
               mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
                 if (!err) {
-                  console.log('carId=' + carId + ' dtimestamp=>' + dtimestamp + ' runDate=>'+ runDate);
-                  collection.find({ vehicleID: carId, Date: { "$gte" : dtimestamp} }).toArray(function (err, slot3MotorTempo) {
+                  collection.find({ vehicleID: carId, Date: { "$gte" : dtini , "$lt" : dtend} }).toArray(function (err, slot3MotorTempo) {
                     if (!err) {
                       if (slot3MotorTempo) {
-                        
                         var Slot3Result = 0;
                         var Slot3TempDump = [];
                         slot3MotorTempo.forEach((motor, index) =>
-                          //Slot3TempDump.push(motor.MechanicalScore.EngineBlockTemp)
-                          console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
+                          Slot3TempDump.push(motor.MechanicalScore.EngineBlockTemp)
+                          //console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
                         );
-                        console.log('Slot3TempDump=>' + Slot3TempDump);
+                        //console.log('Slot3TempDump=>' + Slot3TempDump);
                         Slot3Result = Slot3TempDump => Slot3TempDump.reduce((prev, curr) => prev + curr) / Slot3TempDump.length;
-                        res.json({ score: 10, valorBase: Slot3Result });
+                        res.json({ score: 0, valorBase: Slot3Result });
+                      } else {
+                        res.json({ score: 0 });
+                      }  
+                    } else {
+                      console.log('Error:' + err);
+                      res.json({ score: -1 });
+                    }
+                    
+                  })  
+                } else {
+                  console.log('Error:' + err);
+                }               
+              })
+          })
+        })
+      })
+}
+
+drivebehaviorController.slot3FuelScore = function (req, res) {
+  
+  
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.plateid;
+    var runDate = req.params.setDate;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+    
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toISOString();
+              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toISOString();
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  collection.find({ vehicleID: carId, Date: { "$gte" : dtini , "$lt" : dtend} }).toArray(function (err, slot3Fuel) {
+                    if (!err) {
+                      if (slot3Fuel) {
+                        var Slot3Result = 0;
+                        var Slot3TempDump = [];
+                        slot3Fuel.forEach((motor) =>
+                          Slot3TempDump.push(motor.MechanicalScore.Fuel)
+                          //console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
+                        );
+                        //console.log('Slot3TempDump=>' + Slot3TempDump);
+                        Slot3Result = Slot3TempDump => Slot3TempDump.reduce((prev, curr) => prev + curr) / Slot3TempDump.length;
+                        res.json({ score: 0, valorBase: Slot3Result });
+                      } else {
+                        res.json({ score: 0 });
+                      }  
+                    } else {
+                      console.log('Error:' + err);
+                      res.json({ score: -1 });
+                    }
+                    
+                  })  
+                } else {
+                  console.log('Error:' + err);
+                }               
+              })
+          })
+        })
+      })
+}
+
+
+drivebehaviorController.slot3OilLevelScore = function (req, res) {
+  
+  
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.plateid;
+    var runDate = req.params.setDate;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+    
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toISOString();
+              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toISOString();
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  collection.find({ vehicleID: carId, Date: { "$gte" : dtini , "$lt" : dtend} }).toArray(function (err, slot3Data) {
+                    if (!err) {
+                      if (slot3Data) {
+                        var Slot3Result = 0;
+                        var Slot3TempDump = [];
+                        slot3Data.forEach((motor) =>
+                          Slot3TempDump.push(motor.MechanicalScore.OilLevel)
+                          //console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
+                        );
+                        //console.log('Slot3TempDump=>' + Slot3TempDump);
+                        Slot3Result = Slot3TempDump => Slot3TempDump.reduce((prev, curr) => prev + curr) / Slot3TempDump.length;
+                        res.json({ score: 0, valorBase: Slot3Result });
                       } else {
                         res.json({ score: 0 });
                       }  
@@ -398,59 +518,4 @@ module.exports = drivebehaviorController
 function randomIntFromInterval(min,max) // min and max included
 {
     return Math.floor(Math.random()*(max-min+1)+min);
-}
-
-function datesByCar (chassi) {
-  cars
-      .find({CHASSIS: chassi})
-      .exec(function (err, vehicleInfo) {
-        var carId = vehicleInfo[0].inoid;
-      
-        mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
-          collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
-            //console.log('carId=' + carId + ' daysLine=>' + JSON.stringify(daysLine))
-            var dateTimeline = []
-            for (var i = 0; i < daysLine.length; i++) {
-              //console.log('daysLine[i].Date=' + moment(daysLine[i]) + ' Momento Status=>' +  moment(daysLine[i]).isValid())
-              if (moment(daysLine[i]).isValid()) {
-                var dtime = moment(daysLine[i]).format("DD/MM/YYYY");
-                //console.log('dtime=' + dtime)
-                dateTimeline.push(dtime)
-              }
-            }
-            return (dateTimeline)
-          });
-      });
-   })
-}
-
-function scorebyCar (chassi, dtime) {
-  var Slot3 = 0;
-  cars
-      .find({CHASSIS: chassi})
-      .exec(function (err, vehicleInfo) {
-        var carId = vehicleInfo[0].inoid;
-      
-        mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
-          collection.find({ vehicleID: carId, Date: dtime }).toArray(function (err, scores) {
-            console.log('carId=' + carId + 'scores=>' + JSON.stringify(scores))
-            var dateTimeline = []
-            /* Slot Mecanico */
-            var OilLevelScore = 10;
-            var AirFilterConditionScore = 10;
-            var FaltyBulbsScore = 10;
-            var NightDrivingHoursScore = 10;
-            for (var i = 0; i < scores.length; i++) {
-              OilLevelScore = (OilLevelScore + scores[i].OilLevelScore) / 2;
-              AirFilterConditionScore = (AirFilterConditionScore + scores[i].AirFilterConditionScore) / 2;
-              FaltyBulbsScore = (FaltyBulbsScore + scores[i].FaltyBulbsScore) / 2;
-              NightDrivingHoursScore = (NightDrivingHoursScore + scores[i].NightDrivingHoursScore) / 2;
-            }
-
-            Slot3 = (OilLevelScore + AirFilterConditionScore + FaltyBulbsScore + NightDrivingHoursScore) / 4;
-
-            return (Slot3)
-          });
-      });
-   })
 }

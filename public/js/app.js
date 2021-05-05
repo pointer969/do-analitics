@@ -124,6 +124,8 @@ $(document).ready(function($){
     getRefreshSlo3RoadDuration();
     getRefreshSlo3RoadLong();
     getRefreshSlo3MotorTemp();
+    getRefreshSlo3Fuel();
+    getRefreshSlo3Oil();
   });
 });
 
@@ -264,6 +266,50 @@ function getRefreshSlo3RoadLong() {
           $('#slot3motorTempScore').html( Math.round(data.valorBase,2) + '  Celsius' );
         } else {
           $('#slot3motorTempScore').html( "Sem dados" );
+        }
+        
+      })
+  }
+
+  function getRefreshSlo3Fuel() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/fuel/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3FuelScore').html( Math.round(data.valorBase,2) + '  Litros' );
+        } else {
+          $('#slot3FuelScore').html( "Sem dados" );
+        }
+        
+      })
+}
+  
+function getRefreshSlo3Oil() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/oil/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3FuelScore').html( Math.round(data.valorBase,2) );
+        } else {
+          $('#slot3FuelScore').html( "Sem dados" );
         }
         
       })

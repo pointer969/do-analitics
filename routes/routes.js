@@ -86,6 +86,8 @@ router.get('/timeline', isLoggedIn, drivebahavior.timeline)
 router.get('/driverbehavior/score/slot3/roadduration/:plateid/:setDate', isLoggedIn, drivebahavior.slot3RoadDurationScore)
 router.get('/driverbehavior/score/slot3/roadlong/:plateid/:setDate', isLoggedIn, drivebahavior.slot3RoadLongScore)
 router.get('/driverbehavior/score/slot3/motortemp/:plateid/:setDate', isLoggedIn, drivebahavior.slot3MotorTemperatureScore)
+router.get('/driverbehavior/score/slot3/fuel/:plateid/:setDate', isLoggedIn, drivebahavior.slot3FuelScore)
+router.get('/driverbehavior/score/slot3/oil/:plateid/:setDate', isLoggedIn, drivebahavior.slot3OilLevelScore)
 
  // ++++++++++++++++++++++ Users CRUD +++++++++++++++++++++++++++
 // List all Users

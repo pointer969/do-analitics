@@ -22,7 +22,7 @@ block content
                   .card.text-white.bg-primary
                     .card-body.pb-0                  
                       h4.mb-3 
-                        #SumScore 7.92                             
+                        #SumScore 8.87                             
                       p Overall Score
                     .chart-wrapper.px-3(style='height:70px;')
                       canvas#card-chart1.chart(height='70') 
@@ -45,8 +45,29 @@ block content
                                 var rawDrecv =   "2020-10-18"
                                 var cumTot   = "7.926"
                                 
-                                lbl.push(rawDrecv);
-                                dts.push(cumTot);
+                                lbl.push("2020-10-18");
+                                dts.push("7.926");
+
+                                lbl.push("2020-05-19");
+                                dts.push("8.91");
+
+                                lbl.push("2020-05-28");
+                                dts.push("9.40");
+
+                                lbl.push("2020-06-03");
+                                dts.push("9.82");
+
+                                lbl.push("2020-06-04");
+                                dts.push("9.75");
+
+                                lbl.push("2020-06-08");
+                                dts.push("9.74");
+
+                                lbl.push("2020-06-09");
+                                dts.push("9.57");
+
+                                lbl.push("2020-06-13");
+                                dts.push("9.83");
                                 //- });
                                                               
                                 var data = {
@@ -548,8 +569,9 @@ block content
                                 td 0  
                               tr                                
                                 td Velocidade(Km/h) Acima do Limite em Curva (Ex: Velocidade[Máx. Permitido no trecho] )
-                                td 2
-                                 .card                                       
+                                td 
+                                  #slot1OverSpeedScore
+                                  .card                                       
                                       #mapContainer1(style='width: 500px; height: 400px; background: white')                                       
                                       script(type='text/javascript').
                                         //- function addPolylineToMap(map) {
@@ -601,11 +623,13 @@ block content
                                           marker2 = new H.map.Marker(coords, {icon: icon2});   
                                         map.addObject(marker2);              
                               tr                                
-                                td Tempo Direção
-                                td 05:29:50
+                                td Tempo de direção
+                                td 
+                                  #slot1roadLongScore 
                               tr                                
                                 td KM Rodado
-                                td 391                                                                                            
+                                td 
+                                  #slot1roadDurationScore                                                                                            
                        if (pages > 1)
                         ul.pagination
                           != createPagination(pages, page)  
@@ -740,18 +764,20 @@ block content
                                         
                                       //-   addPolylineToMap(map);                                                
                               tr                                
-                                td Turno (Santo André[Sunrise 5:29:46 am / Sunset 6:12:45 pm] -   Embu das Artes[Sunrise 5:30:58 am / Sunset 6:13:53 pm]) by Sunrise-Sunset.org
+                                td Turno
+                                  //- (Santo André[Sunrise 5:29:46 am / Sunset 6:12:45 pm] -   Embu das Artes[Sunrise 5:30:58 am / Sunset 6:13:53 pm]) by Sunrise-Sunset.org
                                 td
-                                  #slot2DriveingTimeScore Diurno 04:13:50 / Noturno : 01:16:00       
+                                  #slot2DriveingTimeScore       
                               tr                                
                                 td Repetição de trecho no dia
-                                td 1
+                                td 0
                               tr                                
                                 td Tempo de direção em riscos
                                 td 0   
                               tr                                
                                 td Pernoite
-                                td 0                                                                                         
+                                td 
+                                  #slot2AllnightLongScore                                                                                         
                        if (pages > 1)
                         ul.pagination
                           != createPagination(pages, page)   

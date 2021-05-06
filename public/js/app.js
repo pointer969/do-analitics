@@ -129,6 +129,8 @@ $(document).ready(function($){
     getRefreshSlo3Battery();
     getRefreshSlo2Geolocation();
     getRefreshSlo2DrivingTime();
+    getRefreshSlo2AlnightLong();
+    getRefreshSlo1OverSpeed();
   });
 });
 
@@ -223,9 +225,11 @@ function getRefreshSlo3RoadDuration() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         if (data.score > 0) {
-          $('#slot3roadDurationScore').html( Math.round(data.valorBase/1000,2) + ' Km' );
+          $('#slot3roadDurationScore').html(Math.round(data.valorBase / 1000, 2) + ' Km');
+          $('#slot1roadDurationScore').html( Math.round(data.valorBase/1000,2) + ' Km' );
         } else {
-          $('#slot3roadDurationScore').html( "Sem dados" );
+          $('#slot3roadDurationScore').html("Sem dados");
+          $('#slot1roadDurationScore').html( "Sem dados" );
         }
         
       })
@@ -244,9 +248,11 @@ function getRefreshSlo3RoadLong() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         if (data.score > 0) {
-          $('#slot3roadLongScore').html( Math.round(data.valorBase,2) + '  Horas' );
+          $('#slot3roadLongScore').html(Math.round(data.valorBase, 2) + '  Horas');
+          $('#slot1roadLongScore').html( Math.round(data.valorBase,2) + '  Horas' );
         } else {
-          $('#slot3roadLongScore').html( "Sem dados" );
+          $('#slot3roadLongScore').html("Sem dados");
+          $('#slot1roadLongScore').html( "Sem dados" );
         }
         
       })
@@ -359,6 +365,7 @@ function getRefreshSlo2Geolocation() {
 }
 
 function feedMap (coord) {
+  
   var platform = new H.service.Platform({
     app_id: 'YevpXNgekiGoMvb2Wge6',
     app_code: '6jK4ow-mZzPGv8k3_4Yd-A'
@@ -404,9 +411,53 @@ function getRefreshSlo2DrivingTime() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         if (data.score > 0) {
-          $('#slot2DriveingTimeScore').html( "Diurno:" + data.diurno + " / Noturno:" + data.noturno );
+          $('#slot2DriveingTimeScore').html( "Diurno : " + data.diurno + ":00:00 / Noturno : " + data.noturno + ":00:00" );
         } else {
           $('#slot2DriveingTimeScore').html( "Sem dados" );
+        }
+        
+      })
+}
+
+function getRefreshSlo2AlnightLong() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot2/allnight/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot2AllnightLongScore').html( (data.pernoite > 8 ? 1 : 0) + ' (' + data.pernoite  + ' horas)' );
+        } else {
+          $('#slot2AllnightLongScore').html( "Sem dados" );
+        }
+        
+      })
+}
+
+function getRefreshSlo1OverSpeed() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot1/overspeed/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot1OverSpeedScore').html( data.score + ' (' + data.velocidades.length + ' ocorrencias)' );
+        } else {
+          $('#slot1OverSpeedScore').html( "Sem dados" );
         }
         
       })

@@ -591,10 +591,10 @@ drivebehaviorController.slot2Geolocalization = function (req, res) {
             .exec(function (err, vehicleInfo) {
               var carId = vehicleInfo[0].inoid;
               var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
-              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1 }, function (err, carPosition) {
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1 },{sort: {timestamp: 1}} ,function (err, carPosition) {
                 if (!err) {
                   if (carPosition) {
-                      console.log('carPosition=>' + JSON.stringify(carPosition))
+                      // console.log('carPosition=>' + JSON.stringify(carPosition))
                       var mapPositions = [];
                       for (var i = 0; i< carPosition.length; i++){
                         if (carPosition[i])
@@ -632,8 +632,8 @@ drivebehaviorController.slot2DrivingTime = function (req, res) {
               vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1, timestamp: 1 }, function (err, carPosition) {
                 if (!err) {
                   if (carPosition) {
-                      console.log('carPosition=>' + JSON.stringify(carPosition))
-                    var mapPositions = [];
+                      // console.log('carPosition=>' + JSON.stringify(carPosition))
+                    // var mapPositions = [];
                     var hoursDayPositions = [];
                     var hoursNightPositions = [];
                       for (var i = 0; i< carPosition.length; i++){
@@ -647,14 +647,15 @@ drivebehaviorController.slot2DrivingTime = function (req, res) {
                         }                           //mapPositions.push({ lat: carPosition[i].Lat.replace(',','.'), lng: carPosition[i].Long.replace(',','.') });
                     }
                       //var dateRoaded = HoursRoad.map(d => moment(d,"dd/mm/yyyy hh24:mi:ss"));
-                      var dayMaxDate = moment.max(hoursDayPositions);
-                      var dayMinDate = moment.min(hoursDayPositions);
-                      var dayDuration = moment.duration(dayMaxDate.diff(dayMinDate));
-                    
-                      var nightMaxDate = moment.max(hoursNightPositions);
-                      var nightMinDate = moment.min(hoursNightPositions);
-                      var nightDuration = moment.duration(nightMaxDate.diff(nightMinDate));
-                      res.json({ score: 10, diurno: dayDuration.asHours(), noturno: nightDuration.asHours() })
+                      // console.log('hoursDayPositions=>' + hoursDayPositions);
+                      var dayMaxDate = Math.max.apply(Math, hoursDayPositions);
+                      var dayMinDate = Math.min.apply(Math, hoursDayPositions);
+                      var dayDuration = dayMaxDate - dayMinDate;
+                      // console.log('dayMaxDate=>' + dayMaxDate + ' dayMinDate=>' + dayMinDate);
+                      var nightMaxDate = Math.max.apply(Math,hoursNightPositions);
+                      var nightMinDate = Math.min.apply(Math,hoursNightPositions);
+                      var nightDuration = nightMaxDate - nightMinDate;
+                      res.json({ score: 10, diurno: dayDuration, noturno: nightDuration })
                     } else {
                       res.json({ score: 0 })
                     }
@@ -667,9 +668,152 @@ drivebehaviorController.slot2DrivingTime = function (req, res) {
         })
    
 }
+
+drivebehaviorController.slot2AlnightLongTime = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1, timestamp: 1 }, function (err, carPosition) {
+                if (!err) {
+                  if (carPosition) {
+                      // console.log('carPosition=>' + JSON.stringify(carPosition))
+                    // var mapPositions = [];
+                    var hoursDayPositions = [];
+                    var hoursNightPositions = [];
+                      for (var i = 0; i< carPosition.length; i++){
+                        if (carPosition[i]) {
+                          var horaPoint = moment(carPosition[i].timestamp, 'DD/MM/YYYY HH:mm');
+                          if (horaPoint.hour() > 6 && horaPoint.hour() < 20) {
+                            hoursDayPositions.push(horaPoint.hour())
+                          } else {
+                            hoursNightPositions.push(horaPoint.hour())
+                          }
+                        }                           //mapPositions.push({ lat: carPosition[i].Lat.replace(',','.'), lng: carPosition[i].Long.replace(',','.') });
+                    }
+                      //var dateRoaded = HoursRoad.map(d => moment(d,"dd/mm/yyyy hh24:mi:ss"));
+                      // console.log('hoursDayPositions=>' + hoursDayPositions);
+                      var nightMaxDate = Math.max.apply(Math,hoursNightPositions);
+                      var nightMinDate = Math.min.apply(Math,hoursNightPositions);
+                      var nightDuration = nightMaxDate - nightMinDate;
+                      if (nightDuration < 0)
+                        nightDuration += 24
+
+                      
+                      res.json({ score: 10, pernoite: nightDuration })
+                    } else {
+                      res.json({ score: 0 })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+    
+}
+
+drivebehaviorController.slot1SpeedOver = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1, timestamp: 1 },{sort:{timestamp: 1}}, function (err, carPosition) {
+                if (!err) {
+                  if (carPosition) {
+                     console.log('carPosition=>' + JSON.stringify(carPosition))
+                     var mapSpeeds = [];
+                      for (var i = 1; i< carPosition.length; i+=3){
+                        if (carPosition[i]) {
+                          var lat1 = carPosition[i - 1].Lat;
+                          var lon1 = carPosition[i - 1].Long;
+                          var lat2 = carPosition[i].Lat;
+                          var lon2 = carPosition[i].Long;
+                          console.log('lat1=' + parseFloat(lat1).toFixed(6) + ' lon1=' + lon1 + ' lat2=' + lat2 + ' lon2=' + lon2);
+                          var distanceA = distance_on_geoid(parseFloat(lat1).toFixed(6), parseFloat(lon1).toFixed(6), parseFloat(lat2).toFixed(6), parseFloat(lon2).toFixed(6));
+                          var t1 = moment(carPosition[i - 1].timestamp, 'DD/MM/YYYY HH:mm');
+                          var t2 = moment(carPosition[i].timestamp, 'DD/MM/YYYY HH:mm');
+                          console.log('t1=' + t1 + ' t2=' + t2 + ' distanceA=' + distanceA);
+
+                          var timegap = t2.diff(t1)/1000;
+                          var speed_mps = distanceA / timegap;
+                          var speed_kph = (speed_mps * 3600) / 1000;
+                          console.log('speed_kph =>' + speed_kph);
+                          mapSpeeds.push(speed_kph)
+                        }  
+                    }
+                    var overSpeed = []
+                    for (var j = 0; j < mapSpeeds.length; j++){
+                      if (mapSpeeds[j] > 80) {
+                        overSpeed.push(mapSpeeds[j])
+                      }
+                    }
+                    var nscore = 10 - overSpeed.length
+                    if (nscore < 0)
+                      nscore =0
+                    res.json({ score: nscore, velocidades: overSpeed })
+                    } else {
+                      res.json({ score: 0 })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+    
+}
 module.exports = drivebehaviorController
 
 function randomIntFromInterval(min,max) // min and max included
 {
     return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function distance_on_geoid (lat1, lon1, lat2, lon2) {
+  var clat1 = lat1 * Math.PI / 180;
+  var clon1 = lon1 * Math.PI / 180;
+  
+  var clat2 = lat2 * Math.PI / 180;
+  var clon2 = lon2 * Math.PI / 180;
+  // console.log('Conversoes clat1=' + clat1 + ' clon1=' + clon1 + ' clat2=' + clat2 + ' clon2=' + clon2)  
+  var r = 6378100;
+
+  var rho1 = r * Math.cos(clat1);
+  var z1 = r * Math.sin(clat1);
+  var x1 = rho1 * Math.cos(clon1);
+  var y1 = rho1 * Math.sin(clon1);
+
+  var rho2 = r * Math.cos(clat2);
+  var z2 = r * Math.sin(clat2);
+  var x2 = rho2 * Math.cos(clon2);
+  var y2 = rho2 * Math.sin(clon2);
+
+  var dot = (x1 * x2 + y1 * y2 + z1 * z2);
+  var cos_theta = dot / (r * r);
+  var theta = Math.acos(cos_theta);
+  
+  return r * theta;
 }

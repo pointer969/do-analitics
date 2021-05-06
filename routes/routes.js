@@ -91,6 +91,8 @@ router.get('/driverbehavior/score/slot3/oil/:plateid/:setDate', isLoggedIn, driv
 router.get('/driverbehavior/score/slot3/battery/:plateid/:setDate', isLoggedIn, drivebahavior.slot3BatteryScore)
 router.get('/driverbehavior/score/slot2/geolocation/:plateid/:setDate', isLoggedIn, drivebahavior.slot2Geolocalization)
 router.get('/driverbehavior/score/slot2/drivingtime/:plateid/:setDate', isLoggedIn, drivebahavior.slot2DrivingTime)
+router.get('/driverbehavior/score/slot2/allnight/:plateid/:setDate', isLoggedIn, drivebahavior.slot2AlnightLongTime)
+router.get('/driverbehavior/score/slot1/overspeed/:plateid/:setDate', isLoggedIn, drivebahavior.slot1SpeedOver)
 
  // ++++++++++++++++++++++ Users CRUD +++++++++++++++++++++++++++
 // List all Users

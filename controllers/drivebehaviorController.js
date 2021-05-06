@@ -456,6 +456,67 @@ drivebehaviorController.slot3FuelScore = function (req, res) {
 
 drivebehaviorController.slot3OilLevelScore = function (req, res) {
   
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.plateid;
+    var runDate = req.params.setDate;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+    
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toDate();
+              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toDate();
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  // console.log('carId=' + carId + ' dtini=' + dtini + ' dtend=' + dtend);
+                  collection.find({ vehicleID: carId, Date: { "$gte" : dtini , "$lt" : dtend} }).toArray(function (err, slot3Data) {
+                    if (!err) {
+                      if (slot3Data) {
+                        
+                        var Slot3TempDump = [];
+                        //console.log('slot3Data=>' + JSON.stringify(slot3Data));
+                        slot3Data.forEach((motor, index) =>
+                          Slot3TempDump.push(parseFloat(motor.MechanicalScore.OilLevel))
+                          //console.log('motor info:' + motor.MechanicalScore.OilLevel + ' seq:' + index)
+                        );
+                        var sumData = Slot3TempDump.reduce((prev, curr) => prev + curr);
+                        //console.log('sumData=>' + sumData + ' Slot3TempDump.length =>' + Slot3TempDump.length);
+                        var Slot3Result = sumData / Slot3TempDump.length;
+                        //console.log('Slot3Result=>' + Slot3Result);
+                        res.json({ score: 1, valorBase: Slot3Result });
+                      } else {
+                        res.json({ score: 0 });
+                      }  
+                    } else {
+                      console.log('Error:' + err);
+                      res.json({ score: -1 });
+                    }
+                  })  
+                } else {
+                  console.log('Error:' + err);
+                }               
+              })
+          })
+        })
+      })
+}
+
+drivebehaviorController.slot3BatteryScore = function (req, res) {
   
     var baseurl = req.protocol + "://" + req.get('host') + "/"    
     var page = (req.query.page > 0 ? req.query.page : 1) - 1;
@@ -480,22 +541,24 @@ drivebehaviorController.slot3OilLevelScore = function (req, res) {
             .find({ CHASSIS: carss[0].vin })
             .exec(function (err, vehicleInfo) {
               var carId = vehicleInfo[0].inoid;
-              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toISOString();
-              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toISOString();
+              var dtini = moment(runDate + '000000', "YYYYMMDDHHmmss").toDate();
+              var dtend = moment(runDate + '235900',"YYYYMMDDHHmmss").toDate();
               mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
                 if (!err) {
+                  // console.log('carId=' + carId + ' dtini=' + dtini + ' dtend=' + dtend);
                   collection.find({ vehicleID: carId, Date: { "$gte" : dtini , "$lt" : dtend} }).toArray(function (err, slot3Data) {
                     if (!err) {
                       if (slot3Data) {
                         var Slot3Result = 0;
                         var Slot3TempDump = [];
-                        slot3Data.forEach((motor) =>
-                          Slot3TempDump.push(motor.MechanicalScore.OilLevel)
-                          //console.log('motor info:' + motor.MechanicalScore.EngineBlockTemp + ' seq:' + index)
+                        // console.log('slot3Data=>' + JSON.stringify(slot3Data));
+                        slot3Data.forEach((motor, index) =>
+                          Slot3TempDump.push(motor.MechanicalScore.BatteryLevel)
+                          //console.log('motor info:' + motor.MechanicalScore.OilLevel + ' seq:' + index)
                         );
-                        //console.log('Slot3TempDump=>' + Slot3TempDump);
+                        // console.log('Slot3TempDump=>' + Slot3TempDump);
                         Slot3Result = Slot3TempDump => Slot3TempDump.reduce((prev, curr) => prev + curr) / Slot3TempDump.length;
-                        res.json({ score: 0, valorBase: Slot3Result });
+                        res.json({ score: 1, valorBase: Slot3Result ? 0 : Slot3Result });
                       } else {
                         res.json({ score: 0 });
                       }  
@@ -503,7 +566,6 @@ drivebehaviorController.slot3OilLevelScore = function (req, res) {
                       console.log('Error:' + err);
                       res.json({ score: -1 });
                     }
-                    
                   })  
                 } else {
                   console.log('Error:' + err);
@@ -512,6 +574,98 @@ drivebehaviorController.slot3OilLevelScore = function (req, res) {
           })
         })
       })
+}
+
+drivebehaviorController.slot2Geolocalization = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1 }, function (err, carPosition) {
+                if (!err) {
+                  if (carPosition) {
+                      console.log('carPosition=>' + JSON.stringify(carPosition))
+                      var mapPositions = [];
+                      for (var i = 0; i< carPosition.length; i++){
+                        if (carPosition[i])
+                          mapPositions.push({ lat: carPosition[i].Lat.replace(',','.'), lng: carPosition[i].Long.replace(',','.') });
+                      }
+                      res.json({ positions: mapPositions })
+                    } else {
+                      res.json({ positions: "" })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+   
+}
+
+drivebehaviorController.slot2DrivingTime = function (req, res) {
+  var runDate = req.params.setDate;
+  var _id = req.params.plateid;
+      vehicle
+        .find({ plate: _id })
+        .populate({
+          path: 'customer'
+        })
+        .exec(function (err, carss) {
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              var dtimestamp = moment(runDate).format("DD/MM/YYYY").toString();
+              vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1, timestamp: 1 }, function (err, carPosition) {
+                if (!err) {
+                  if (carPosition) {
+                      console.log('carPosition=>' + JSON.stringify(carPosition))
+                    var mapPositions = [];
+                    var hoursDayPositions = [];
+                    var hoursNightPositions = [];
+                      for (var i = 0; i< carPosition.length; i++){
+                        if (carPosition[i]) {
+                          var horaPoint = moment(carPosition[i].timestamp, 'DD/MM/YYYY HH:mm');
+                          if (horaPoint.hour() > 6 && horaPoint.hour() < 20) {
+                            hoursDayPositions.push(horaPoint.hour())
+                          } else {
+                            hoursNightPositions.push(horaPoint.hour())
+                          }
+                        }                           //mapPositions.push({ lat: carPosition[i].Lat.replace(',','.'), lng: carPosition[i].Long.replace(',','.') });
+                    }
+                      //var dateRoaded = HoursRoad.map(d => moment(d,"dd/mm/yyyy hh24:mi:ss"));
+                      var dayMaxDate = moment.max(hoursDayPositions);
+                      var dayMinDate = moment.min(hoursDayPositions);
+                      var dayDuration = moment.duration(dayMaxDate.diff(dayMinDate));
+                    
+                      var nightMaxDate = moment.max(hoursNightPositions);
+                      var nightMinDate = moment.min(hoursNightPositions);
+                      var nightDuration = moment.duration(nightMaxDate.diff(nightMinDate));
+                      res.json({ score: 10, diurno: dayDuration.asHours(), noturno: nightDuration.asHours() })
+                    } else {
+                      res.json({ score: 0 })
+                    }
+                } else {
+                  console.log('Error:' + err)
+                }
+               
+              })
+            })
+        })
+   
 }
 module.exports = drivebehaviorController
 

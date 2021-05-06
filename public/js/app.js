@@ -126,6 +126,9 @@ $(document).ready(function($){
     getRefreshSlo3MotorTemp();
     getRefreshSlo3Fuel();
     getRefreshSlo3Oil();
+    getRefreshSlo3Battery();
+    getRefreshSlo2Geolocation();
+    getRefreshSlo2DrivingTime();
   });
 });
 
@@ -220,7 +223,7 @@ function getRefreshSlo3RoadDuration() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         if (data.score > 0) {
-          $('#slot3roadDurationScore').html( data.valorBase + ' metros' );
+          $('#slot3roadDurationScore').html( Math.round(data.valorBase/1000,2) + ' Km' );
         } else {
           $('#slot3roadDurationScore').html( "Sem dados" );
         }
@@ -307,10 +310,104 @@ function getRefreshSlo3Oil() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         if (data.score > 0) {
-          $('#slot3FuelScore').html( Math.round(data.valorBase,2) );
+          $('#slot3OilScore').html( data.valorBase );
         } else {
-          $('#slot3FuelScore').html( "Sem dados" );
+          $('#slot3OilScore').html( "Sem dados" );
         }
         
       })
+}
+  
+function getRefreshSlo3Battery() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot3/battery/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot3BatteryScore').html( Math.round(data.valorBase,2) );
+        } else {
+          $('#slot3BatteryScore').html( "Sem dados" );
+        }
+        
+      })
+}
+  
+function getRefreshSlo2Geolocation() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot2/geolocation/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        // return data.positions
+        feedMap(data.positions);
+      })
+}
+
+function feedMap (coord) {
+  var platform = new H.service.Platform({
+    app_id: 'YevpXNgekiGoMvb2Wge6',
+    app_code: '6jK4ow-mZzPGv8k3_4Yd-A'
+  });
+
+  var pixelRatio = window.devicePixelRatio || 1;
+  var defaultLayers = platform.createDefaultLayers({
+    tileSize: pixelRatio === 1 ? 256 : 512,
+    ppi: pixelRatio === 1 ? undefined : 320
+  });
+  var map = new H.Map(document.getElementById('mapContainer'),
+    defaultLayers.normal.map,{
+    center: {lat:-23.6848062, lng:-46.6916117},
+    zoom: 5,
+    pixelRatio: pixelRatio
+  });
+  var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+  var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+  var lineString = new H.geo.LineString();
+  
+  for (var j = 0; j < coord.length; j++){
+    lineString.pushPoint(coord[j])
   }
+  // console.log('lineString=>' + lineString);
+   map.addObject(new H.map.Polyline(
+      lineString, { style: { lineWidth: 4 }}
+    ));
+  
+}
+
+function getRefreshSlo2DrivingTime() {
+  
+    var dInfo = $('.scorereload').attr("href");
+    var dDate = dInfo.toString().replace('#/', '');
+    var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
+    $.ajax
+      ({
+        type: "get",
+        url: "/driverbehavior/score/slot2/drivingtime/" + dplate + "/" + dDate,
+        dataType: "json",
+        crossDomain: "false",
+        contentType: "application/json; charset=UTF-8"                                                             
+      }).done(function (data) {
+        if (data.score > 0) {
+          $('#slot2DriveingTimeScore').html( "Diurno:" + data.diurno + " / Noturno:" + data.noturno );
+        } else {
+          $('#slot2DriveingTimeScore').html( "Sem dados" );
+        }
+        
+      })
+}

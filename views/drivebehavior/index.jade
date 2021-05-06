@@ -528,58 +528,58 @@ block content
                                 td Velocidade(Km/h) Acima do Limite em Curva (Ex: Velocidade[Máx. Permitido no trecho] )
                                 td 
                                   #slot1OverSpeedScore
-                                  .card                                       
-                                      #mapContainer1(style='width: 500px; height: 400px; background: white')                                       
-                                      script(type='text/javascript').
-                                        //- function addPolylineToMap(map) {
-                                        //-     var lineString = new H.geo.LineString();
-                                        //-     lineString.pushPoint({lat:-23.753443, lng:-46.538945});
-                                        //-     lineString.pushPoint({lat:-23.801388, lng:-46.669373});
+                                  //- .card                                       
+                                  //-     #mapContainer1(style='width: 500px; height: 400px; background: white')                                       
+                                  //-     script(type='text/javascript').
+                                  //-       //- function addPolylineToMap(map) {
+                                  //-       //-     var lineString = new H.geo.LineString();
+                                  //-       //-     lineString.pushPoint({lat:-23.753443, lng:-46.538945});
+                                  //-       //-     lineString.pushPoint({lat:-23.801388, lng:-46.669373});
 
-                                        //-     map.addObject(new H.map.Polyline(
-                                        //-       lineString, { style: { lineWidth: 4 }}
-                                        //-     ));
-                                        //-   }
-                                        var platform = new H.service.Platform({
-                                          app_id: 'YevpXNgekiGoMvb2Wge6',
-                                          app_code: '6jK4ow-mZzPGv8k3_4Yd-A',
-                                          'useHTTPS': true
-                                        });
+                                  //-       //-     map.addObject(new H.map.Polyline(
+                                  //-       //-       lineString, { style: { lineWidth: 4 }}
+                                  //-       //-     ));
+                                  //-       //-   }
+                                  //-       var platform = new H.service.Platform({
+                                  //-         app_id: 'YevpXNgekiGoMvb2Wge6',
+                                  //-         app_code: '6jK4ow-mZzPGv8k3_4Yd-A',
+                                  //-         'useHTTPS': true
+                                  //-       });
 
-                                        var pixelRatio = window.devicePixelRatio || 1;
-                                        var defaultLayers = platform.createDefaultLayers({
-                                          tileSize: pixelRatio === 1 ? 256 : 512,
-                                          ppi: pixelRatio === 1 ? undefined : 320
-                                        });
-                                        var map = new H.Map(document.getElementById('mapContainer1'),
-                                          defaultLayers.normal.map,{
-                                          center: {lat:-23.6848062, lng:-46.6916117},
-                                          zoom: 11,
-                                          pixelRatio: pixelRatio
-                                        });
-                                        var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
-                                        var ui = H.ui.UI.createDefault(map, defaultLayers);
-                                        //- addPolylineToMap(map);   
-                                        var svgMarkup = '<svg width="34" height="34" ' +
-                                                        'xmlns="http://www.w3.org/2000/svg">' +
-                                                        '<rect stroke="white" fill="#1b468d" x="1" y="1" width="70" ' +
-                                                        'height="60" /><text x="12" y="18" font-size="12pt" ' +
-                                                        'font-family="Arial" font-weight="normal" text-anchor="middle" ' +
-                                                        'fill="white">99</text></svg>';  
-                                        var icon = new H.map.Icon(svgMarkup),
-                                          coords = {lat:-23.753443, lng:-46.538945},
-                                          marker = new H.map.Marker(coords, {icon: icon});    
-                                        map.addObject(marker);  
-                                        var svgMarkup2 = '<svg width="34" height="34" ' +
-                                                        'xmlns="http://www.w3.org/2000/svg">' +
-                                                        '<rect stroke="white" fill="#1b468d" x="1" y="1" width="70" ' +
-                                                        'height="60" /><text x="12" y="18" font-size="12pt" ' +
-                                                        'font-family="Arial" font-weight="normal" text-anchor="middle" ' +
-                                                        'fill="white">103</text></svg>';  
-                                        var icon2 = new H.map.Icon(svgMarkup2),
-                                          coords = {lat:-23.801388, lng:-46.669373},
-                                          marker2 = new H.map.Marker(coords, {icon: icon2});   
-                                        map.addObject(marker2);              
+                                  //-       var pixelRatio = window.devicePixelRatio || 1;
+                                  //-       var defaultLayers = platform.createDefaultLayers({
+                                  //-         tileSize: pixelRatio === 1 ? 256 : 512,
+                                  //-         ppi: pixelRatio === 1 ? undefined : 320
+                                  //-       });
+                                  //-       var map = new H.Map(document.getElementById('mapContainer1'),
+                                  //-         defaultLayers.normal.map,{
+                                  //-         center: {lat:-23.6848062, lng:-46.6916117},
+                                  //-         zoom: 11,
+                                  //-         pixelRatio: pixelRatio
+                                  //-       });
+                                  //-       var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+                                  //-       var ui = H.ui.UI.createDefault(map, defaultLayers);
+                                  //-       //- addPolylineToMap(map);   
+                                  //-       var svgMarkup = '<svg width="34" height="34" ' +
+                                  //-                       'xmlns="http://www.w3.org/2000/svg">' +
+                                  //-                       '<rect stroke="white" fill="#1b468d" x="1" y="1" width="70" ' +
+                                  //-                       'height="60" /><text x="12" y="18" font-size="12pt" ' +
+                                  //-                       'font-family="Arial" font-weight="normal" text-anchor="middle" ' +
+                                  //-                       'fill="white">99</text></svg>';  
+                                  //-       var icon = new H.map.Icon(svgMarkup),
+                                  //-         coords = {lat:-23.753443, lng:-46.538945},
+                                  //-         marker = new H.map.Marker(coords, {icon: icon});    
+                                  //-       map.addObject(marker);  
+                                  //-       var svgMarkup2 = '<svg width="34" height="34" ' +
+                                  //-                       'xmlns="http://www.w3.org/2000/svg">' +
+                                  //-                       '<rect stroke="white" fill="#1b468d" x="1" y="1" width="70" ' +
+                                  //-                       'height="60" /><text x="12" y="18" font-size="12pt" ' +
+                                  //-                       'font-family="Arial" font-weight="normal" text-anchor="middle" ' +
+                                  //-                       'fill="white">103</text></svg>';  
+                                  //-       var icon2 = new H.map.Icon(svgMarkup2),
+                                  //-         coords = {lat:-23.801388, lng:-46.669373},
+                                  //-         marker2 = new H.map.Marker(coords, {icon: icon2});   
+                                  //-       map.addObject(marker2);              
                               tr                                
                                 td Tempo de direção
                                 td 

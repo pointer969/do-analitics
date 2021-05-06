@@ -120,7 +120,10 @@ $(document).ready(function($){
     e.preventDefault();
   });
 
-  $('.scorereload').click(function(){
+  $('.scorereload').click(function () {
+    
+    getRefreshSlots();
+
     getRefreshSlo3RoadDuration();
     getRefreshSlo3RoadLong();
     getRefreshSlo3MotorTemp();
@@ -211,6 +214,20 @@ function init(url) {
 //       });
 // }
 
+function getRefreshSlots() {
+  $('#slot2DriveingTimeScore').html( "Processando" );
+  $('#slot1OverSpeedScore').html( "Processando" );
+  $('#slot2AllnightLongScore').html( "Processando" );
+  $('#slot3BatteryScore').html( "Processando" );
+  $('#slot3OilScore').html( "Processando" );
+  $('#slot3FuelScore').html( "Processando" );
+  $('#slot3motorTempScore').html( "Processando" );
+  $('#slot3roadLongScore').html( "Processando" );
+  $('#slot1roadLongScore').html( "Processando" );
+  $('#slot3roadDurationScore').html("Processando");
+  $('#slot1roadDurationScore').html( "Processando" );
+}
+
 function getRefreshSlo3RoadDuration() {
   
     var dInfo = $('.scorereload').attr("href");
@@ -224,6 +241,10 @@ function getRefreshSlo3RoadDuration() {
         crossDomain: "false",
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
+       
+        $('#detailSlot1').css('display','block');
+        $('#detailSlot2').css('display','block');
+        $('#detailSlot3').css('display','block');
         if (data.score > 0) {
           $('#slot3roadDurationScore').html(Math.round(data.valorBase / 1000, 2) + ' Km');
           $('#slot1roadDurationScore').html( Math.round(data.valorBase/1000,2) + ' Km' );

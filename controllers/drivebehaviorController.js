@@ -13,7 +13,8 @@ var jwt             = require('jsonwebtoken')
 var config          = require('../lib/config')
 var async           = require('run-async')
 var Carvars         = require('../models/Calcvar')
-var vehiclePosition        = require('../models/VehicleMBHeaderPositions')
+var ScoreOverAll    = require('../models/Score');
+var vehiclePosition = require('../models/VehicleMBHeaderPositions')
 var moment          = require("moment");
 var unid            = require("uuid/v4");
 var drivebehaviorController = {}
@@ -73,20 +74,44 @@ var drivebehaviorController = {}
           cars
             .find({ CHASSIS: carss[0].vin })
             .exec(function (err, vehicleInfo) {
-              var carId = vehicleInfo[0].inoid;              
+              var carId = vehicleInfo[0].inoid;
+              
               mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
-                
-                collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
-                  res.render('drivebehavior/index',
-                    {
-                      title: 'DriveOn Safe Score | Overall Score',
-                      veiculos: carss,
-                      timeline: daysLine,
-                      user_info: req.user,
-                      dSet: drun,
-                      baseuri: baseurl
+                if (!err) {
+                  collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
+                    mongoose.connection.db.collection('do_score_all', function (err, collectionScore) {
+                      if (!err) {
+                        collectionScore.find({ vehicleId: carId }).toArray(function (err, scoresinfo) {
+                        
+                            if (scoresinfo) {
+                              console.log('Scores=' + JSON.stringify(scoresinfo))
+                            } else {
+                              console.log('Sem dados de Score')
+                            }
+                            res.render('drivebehavior/index',
+                                {
+                                  title: 'DriveOn Safe Score | Overall Score',
+                                  veiculos: carss,
+                                  timeline: daysLine,
+                                  overall: scoresinfo,
+                                  user_info: req.user,
+                                  dSet: drun,
+                                  baseuri: baseurl
+                                })
+                          
+                        })
+                      } else {
+                        console.log('Falha na busca pela collection do_score_all');
+                      }
+                      
                     })
-                })
+                    
+                    
+                  })
+                } else {
+                  console.log('Falha na busca pela collection do_sco_bha');
+                }
+                
               })
           })
         })
@@ -232,19 +257,19 @@ var drivebehaviorController = {}
     
   }
 
-drivebehaviorController.OverAllScore = function (req, res) {
+// drivebehaviorController.OverAllScore = function (req, res) {
     
-    mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
-      collection.find({ vehicleID: carId }).exec((overllScore) => {
-        if (overllScore) {
+//     mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+//       collection.find({ vehicleID: carId }).exec((overllScore) => {
+//         if (overllScore) {
                  
-        } else {
-          res.JSON({score: 0.0})
-        }
-      })
-    })
+//         } else {
+//           res.JSON({score: 0.0})
+//         }
+//       })
+//     })
   
-  }
+//   }
 
 drivebehaviorController.slot3RoadDurationScore = function (req, res) {
   var runDate = req.params.setDate;

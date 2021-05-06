@@ -9,11 +9,7 @@ var DO_SCORESchema = new Schema({
     slot: String,
     indice: String,
     refdate: String,
-    value: Number,
-    historical: {
-      runDate: String,
-      score: Number
-    }
+    value: Number
 },
 {
     timestamps:true

@@ -22,7 +22,11 @@ block content
                   .card.text-white.bg-primary
                     .card-body.pb-0                  
                       h4.mb-3 
-                        #SumScore 8.87                             
+                        if (overall)
+                          - var overAllScore = overall[0].overall
+                          #SumScore #{ overAllScore }      
+                        else 
+                          #SumScore -//-                     
                       p Overall Score
                     .chart-wrapper.px-3(style='height:70px;')
                       canvas#card-chart1.chart(height='70') 
@@ -158,16 +162,22 @@ block content
                         tbody                             
                               tr                                
                                 td Comportamento de Condução
-                                td 6.2
-                                td 6.7                                  
+                                each dscore in overall
+                                  if (dscore.slot == "1")
+                                    td #{dscore.indice}
+                                    td #{dscore.value}
                               tr                                
                                 td Riscos
-                                td 2.8
-                                td 9.9
+                                each dscore in overall
+                                  if (dscore.slot == "2")
+                                    td #{dscore.indice}
+                                    td #{dscore.value}
                               tr                                
                                 td Comportamento de Manutenção
-                                td 1.0
-                                td 10                                                                                         
+                                each dscore in overall
+                                  if (dscore.slot == "3")
+                                    td #{dscore.indice}
+                                    td #{dscore.value}                                                                                        
                        if (pages > 1)
                         ul.pagination
                           != createPagination(pages, page)  

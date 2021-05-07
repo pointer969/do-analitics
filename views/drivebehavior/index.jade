@@ -200,8 +200,10 @@ block content
                         table.table.table-striped
                           tbody
                             tr
+                              td.text-center(colspan='12') Selecione uma data:
+                            tr
                               td.text-center                              
-                                    a(href='refreshprevious') Antes
+                                    | Antes
                               each dtime, index in timeline
                                 if index < 10
                                   td.text-center       
@@ -210,7 +212,7 @@ block content
                                     else                
                                       a.scorereload(href='#/#{prettyDate(dtime, true)}') #{prettyDate(dtime, false)}
                               td.text-center                              
-                                    a(href='refreshlater') Depois
+                                    | Depois
                       else 
                         table.table.table-striped
                           tbody
@@ -236,7 +238,7 @@ block content
                                 td 0            
                               tr                                
                                 td Frenagem Brusca
-                                td 9  
+                                td 0  
                                 //-  .card                                       
                                 //-     //-  #canvas(style='width: 500px; height: 400px; background: white')    
                                 //-     div(style='width:75%;')
@@ -609,7 +611,8 @@ block content
                                 td Geolocalização
                                 td 
                                   .card                                       
-                                      #mapContainer(style='width: 500px; height: 400px; background: white')                                       
+                                      //- #mapContainer 
+                                      #mapContainer(style='width: 500px; height: 400px; background: white')                                      
                                       //- script(type='text/javascript').
                                       //-   function addPolylineToMap(map) {
                                       //-       var lineString = new H.geo.LineString();

@@ -2621,6 +2621,7 @@ tbody.collapse.show {
 .pagination {
   display: flex;
   padding-left: 0;
+  padding-top: 10px;
   list-style: none; }
 
 .page-item:first-child .page-link, .pagination-datatables li:first-child .page-link, .pagination li:first-child .page-link, .page-item:first-child .pagination-datatables li a, .pagination-datatables li .page-item:first-child a, .pagination-datatables li:first-child a, .page-item:first-child .pagination li a, .pagination li .page-item:first-child a, .pagination li:first-child a {

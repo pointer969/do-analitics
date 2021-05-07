@@ -158,6 +158,8 @@ $(document).on('click', '.card-actions a', function(e){
     $('#myModal').modal('show');
   }
 
+  // window.addEventListener('resize', 
+	// () => map.getViewPort().resize());
   
   // /* Load Score Indicators */
   // var dInfo = $(this).val();
@@ -192,27 +194,6 @@ function init(url) {
   $('[rel="popover"],[data-rel="popover"],[data-toggle="popover"]').popover();
 
 }
-
-// function populateASIDEAlarms(){
-//   // Empty content string
-//   var tableContent = '';
-  
-//       // jQuery AJAX call for JSON
-//       $.getJSON( '/alarm/3WN-16010055', function( data ) {
-  
-//           // For each item in our JSON, add a table row and cells to the content string
-//           $.each(data, function(){
-//               tableContent += '<tr>';
-//               tableContent += '<td><a href="#" class="linkshowuser" rel="' + this.username + '">' + this.username + '</a></td>';
-//               tableContent += '<td>' + this.email + '</td>';
-//               tableContent += '<td><a href="#" class="linkdeleteuser" rel="' + this._id + '">delete</a></td>';
-//               tableContent += '</tr>';
-//           });
-  
-//           // Inject the whole content string into our existing HTML table
-//           $('#userList table tbody').html(tableContent);
-//       });
-// }
 
 function getRefreshSlots() {
   $('#slot2DriveingTimeScore').html( "Processando" );
@@ -249,8 +230,8 @@ function getRefreshSlo3RoadDuration() {
           $('#slot3roadDurationScore').html(Math.round(data.valorBase / 1000, 2) + ' Km');
           $('#slot1roadDurationScore').html( Math.round(data.valorBase/1000,2) + ' Km' );
         } else {
-          $('#slot3roadDurationScore').html("Sem dados");
-          $('#slot1roadDurationScore').html( "Sem dados" );
+          $('#slot3roadDurationScore').html("-- (Sem dados)");
+          $('#slot1roadDurationScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -272,8 +253,8 @@ function getRefreshSlo3RoadLong() {
           $('#slot3roadLongScore').html(Math.round(data.valorBase, 2) + '  Horas');
           $('#slot1roadLongScore').html( Math.round(data.valorBase,2) + '  Horas' );
         } else {
-          $('#slot3roadLongScore').html("Sem dados");
-          $('#slot1roadLongScore').html( "Sem dados" );
+          $('#slot3roadLongScore').html("-- (Sem dados)");
+          $('#slot1roadLongScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -295,7 +276,7 @@ function getRefreshSlo3RoadLong() {
         if (data.score > 0) {
           $('#slot3motorTempScore').html( Math.round(data.valorBase,2) + '  Celsius' );
         } else {
-          $('#slot3motorTempScore').html( "Sem dados" );
+          $('#slot3motorTempScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -317,7 +298,7 @@ function getRefreshSlo3RoadLong() {
         if (data.score > 0) {
           $('#slot3FuelScore').html( Math.round(data.valorBase,2) + '  Litros' );
         } else {
-          $('#slot3FuelScore').html( "Sem dados" );
+          $('#slot3FuelScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -339,7 +320,7 @@ function getRefreshSlo3Oil() {
         if (data.score > 0) {
           $('#slot3OilScore').html( data.valorBase );
         } else {
-          $('#slot3OilScore').html( "Sem dados" );
+          $('#slot3OilScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -361,7 +342,7 @@ function getRefreshSlo3Battery() {
         if (data.score > 0) {
           $('#slot3BatteryScore').html( Math.round(data.valorBase,2) );
         } else {
-          $('#slot3BatteryScore').html( "Sem dados" );
+          $('#slot3BatteryScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -381,6 +362,7 @@ function getRefreshSlo2Geolocation() {
         contentType: "application/json; charset=UTF-8"                                                             
       }).done(function (data) {
         // return data.positions
+        $('#mapContainer').empty();
         feedMap(data.positions);
       })
 }
@@ -398,12 +380,16 @@ function feedMap (coord) {
     tileSize: pixelRatio === 1 ? 256 : 512,
     ppi: pixelRatio === 1 ? undefined : 320
   });
+
   var map = new H.Map(document.getElementById('mapContainer'),
     defaultLayers.normal.map,{
     center: {lat:-23.6848062, lng:-46.6916117},
-    zoom: 5,
+    zoom: 6,
     pixelRatio: pixelRatio
   });
+  
+  window.addEventListener('resize', () => map.getViewPort().resize());
+
   var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
   var ui = H.ui.UI.createDefault(map, defaultLayers);
 
@@ -417,6 +403,7 @@ function feedMap (coord) {
       lineString, { style: { lineWidth: 4 }}
     ));
   
+  map.getViewPort().resize();
 }
 
 function getRefreshSlo2DrivingTime() {
@@ -435,7 +422,7 @@ function getRefreshSlo2DrivingTime() {
         if (data.score > 0) {
           $('#slot2DriveingTimeScore').html( "Diurno : " + data.diurno + ":00:00 / Noturno : " + data.noturno + ":00:00" );
         } else {
-          $('#slot2DriveingTimeScore').html( "Sem dados" );
+          $('#slot2DriveingTimeScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -457,7 +444,7 @@ function getRefreshSlo2AlnightLong() {
         if (data.score > 0) {
           $('#slot2AllnightLongScore').html( (data.pernoite > 8 ? 1 : 0) + ' (' + data.pernoite  + ' horas)' );
         } else {
-          $('#slot2AllnightLongScore').html( "Sem dados" );
+          $('#slot2AllnightLongScore').html( "-- (Sem dados)" );
         }
         
       })
@@ -479,7 +466,7 @@ function getRefreshSlo1OverSpeed() {
         if (data.score > 0) {
           $('#slot1OverSpeedScore').html( data.score + ' (' + data.velocidades.length + ' ocorrencias)' );
         } else {
-          $('#slot1OverSpeedScore').html( "Sem dados" );
+          $('#slot1OverSpeedScore').html( "-- (Sem dados)" );
         }
         
       })

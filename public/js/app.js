@@ -131,19 +131,19 @@ $(document).ready(function ($) {
   });
 
   $('.scorereload').click(function () {
-    
+    var dInfo=  $(this).attr("href");
     getRefreshSlots();
 
-    getRefreshSlo3RoadDuration();
-    getRefreshSlo3RoadLong();
-    getRefreshSlo3MotorTemp();
-    getRefreshSlo3Fuel();
-    getRefreshSlo3Oil();
-    getRefreshSlo3Battery();
-    getRefreshSlo2Geolocation();
-    getRefreshSlo2DrivingTime();
-    getRefreshSlo2AlnightLong();
-    getRefreshSlo1OverSpeed();
+    getRefreshSlo3RoadDuration(dInfo);
+    getRefreshSlo3RoadLong(dInfo);
+    getRefreshSlo3MotorTemp(dInfo);
+    getRefreshSlo3Fuel(dInfo);
+    getRefreshSlo3Oil(dInfo);
+    getRefreshSlo3Battery(dInfo);
+    getRefreshSlo2Geolocation(dInfo);
+    getRefreshSlo2DrivingTime(dInfo);
+    getRefreshSlo2AlnightLong(dInfo);
+    getRefreshSlo1OverSpeed(dInfo);
   });
 });
 
@@ -219,9 +219,9 @@ function getRefreshSlots() {
   $('#slot1roadDurationScore').html( "Processando" );
 }
 
-function getRefreshSlo3RoadDuration() {
+function getRefreshSlo3RoadDuration(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    //var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -246,9 +246,9 @@ function getRefreshSlo3RoadDuration() {
         
       })
 }
-function getRefreshSlo3RoadLong() {
+function getRefreshSlo3RoadLong(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -270,9 +270,9 @@ function getRefreshSlo3RoadLong() {
       })
   }
 
-  function getRefreshSlo3MotorTemp() {
+  function getRefreshSlo3MotorTemp(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -292,9 +292,9 @@ function getRefreshSlo3RoadLong() {
       })
   }
 
-  function getRefreshSlo3Fuel() {
+  function getRefreshSlo3Fuel(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -314,9 +314,9 @@ function getRefreshSlo3RoadLong() {
       })
 }
   
-function getRefreshSlo3Oil() {
+function getRefreshSlo3Oil(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -336,9 +336,9 @@ function getRefreshSlo3Oil() {
       })
 }
   
-function getRefreshSlo3Battery() {
+function getRefreshSlo3Battery(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -358,9 +358,9 @@ function getRefreshSlo3Battery() {
       })
 }
   
-function getRefreshSlo2Geolocation() {
+function getRefreshSlo2Geolocation(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -416,9 +416,9 @@ function feedMap (coord) {
   map.getViewPort().resize();
 }
 
-function getRefreshSlo2DrivingTime() {
+function getRefreshSlo2DrivingTime(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -438,9 +438,9 @@ function getRefreshSlo2DrivingTime() {
       })
 }
 
-function getRefreshSlo2AlnightLong() {
+function getRefreshSlo2AlnightLong(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+    // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax
@@ -460,9 +460,9 @@ function getRefreshSlo2AlnightLong() {
       })
 }
 
-function getRefreshSlo1OverSpeed() {
+function getRefreshSlo1OverSpeed(dInfo) {
   
-    var dInfo = $('.scorereload').attr("href");
+  // var dInfo = $('.scorereload').attr("href");
     var dDate = dInfo.toString().replace('#/', '');
     var dplate = $('#VehicleDtl').text().replace('Placa: ','').trim();
     $.ajax

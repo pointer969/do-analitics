@@ -62,6 +62,75 @@ var drivebehaviorController = {}
       page: page
     };
     
+    
+    User
+      .findOne({email:req.user.email}).exec(function(err, user){  
+        vehicle
+          .find({ plate: _id })
+          .populate({
+            path:'customer'
+          })
+        .exec(function(err, carss){    
+
+          cars
+            .find({ CHASSIS: carss[0].vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
+                    mongoose.connection.db.collection('do_score_all', function (err, collectionScore) {
+                      if (!err) {
+                        collectionScore.find({ vehicleId: carId }).toArray(function (err, scoresinfo) {
+                        
+                            if (scoresinfo) {
+                              // console.log('Scores=' + JSON.stringify(scoresinfo))
+                            } else {
+                              console.log('Sem dados de Score')
+                            }
+                            res.render('drivebehavior/index',
+                                {
+                                  title: 'DriveOn Safe Score | Overall Score',
+                                  veiculos: carss,
+                                  timeline: daysLine,
+                                  overall: scoresinfo,
+                                  user_info: req.user,
+                                  dSet: drun,
+                                  baseuri: baseurl
+                                })
+                          
+                        })
+                      } else {
+                        console.log('Falha na busca pela collection do_score_all');
+                      }
+                      
+                    })
+                    
+                    
+                  })
+                } else {
+                  console.log('Falha na busca pela collection do_sco_bha');
+                }
+                
+              })
+          })
+        })
+      })
+  }
+ drivebehaviorController.platedetailsbyday = function(req, res) {   
+    var baseurl = req.protocol + "://" + req.get('host') + "/"    
+    var page = (req.query.page > 0 ? req.query.page : 1) - 1;
+    var _id = req.params.id;
+    var drun = req.params.ddate;
+    var limit = 10;
+    var options = {
+      limit: limit,
+      page: page
+    };
+    
+    //console.log('req.params=>' + JSON.stringify(req.params));
+
     User
       .findOne({email:req.user.email}).exec(function(err, user){  
         vehicle
@@ -117,7 +186,6 @@ var drivebehaviorController = {}
         })
       })
   }
-
   drivebehaviorController.timeline = function(req, res){
     position
     .find()
@@ -767,7 +835,7 @@ drivebehaviorController.slot1SpeedOver = function (req, res) {
               vehiclePosition.find({ VehicleID: carId, timestamp: { '$regex': dtimestamp, '$options': 'i' } },{ Lat : 1, Long: 1, timestamp: 1 },{sort:{timestamp: 1}}, function (err, carPosition) {
                 if (!err) {
                   if (carPosition) {
-                     console.log('carPosition=>' + JSON.stringify(carPosition))
+                    //  console.log('carPosition=>' + JSON.stringify(carPosition))
                      var mapSpeeds = [];
                       for (var i = 1; i< carPosition.length; i+=3){
                         if (carPosition[i]) {
@@ -775,16 +843,16 @@ drivebehaviorController.slot1SpeedOver = function (req, res) {
                           var lon1 = carPosition[i - 1].Long;
                           var lat2 = carPosition[i].Lat;
                           var lon2 = carPosition[i].Long;
-                          console.log('lat1=' + parseFloat(lat1).toFixed(6) + ' lon1=' + lon1 + ' lat2=' + lat2 + ' lon2=' + lon2);
+                          // console.log('lat1=' + parseFloat(lat1).toFixed(6) + ' lon1=' + lon1 + ' lat2=' + lat2 + ' lon2=' + lon2);
                           var distanceA = distance_on_geoid(parseFloat(lat1).toFixed(6), parseFloat(lon1).toFixed(6), parseFloat(lat2).toFixed(6), parseFloat(lon2).toFixed(6));
                           var t1 = moment(carPosition[i - 1].timestamp, 'DD/MM/YYYY HH:mm');
                           var t2 = moment(carPosition[i].timestamp, 'DD/MM/YYYY HH:mm');
-                          console.log('t1=' + t1 + ' t2=' + t2 + ' distanceA=' + distanceA);
+                          // console.log('t1=' + t1 + ' t2=' + t2 + ' distanceA=' + distanceA);
 
                           var timegap = t2.diff(t1)/1000;
                           var speed_mps = distanceA / timegap;
                           var speed_kph = (speed_mps * 3600) / 1000;
-                          console.log('speed_kph =>' + speed_kph);
+                          // console.log('speed_kph =>' + speed_kph);
                           mapSpeeds.push(speed_kph)
                         }  
                     }

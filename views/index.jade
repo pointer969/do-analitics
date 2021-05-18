@@ -641,14 +641,14 @@ block content
                           th.text-center Placa
                           th.text-center Freet Id
                           th.text-center Status
-                          th.text-center Registros
-                          th.text-center Ultima Execução
+                          //- th.text-center Registros
+                          //- th.text-center Ultima Execução
                       tbody                      
                         each srvc in carros
                           - var cln = 0
                           - var nplate = srvc.plate
                           - var nservice = srvc.vin
-                          - var nstatus = 'on'
+                          - var nstatus = srvc.status
                           - var crecords = ''
                           - var nlexecution = ''
                           tr
@@ -661,11 +661,11 @@ block content
                                 if (nstatus =='on')
                                     span.avatar-status.badge-success  
                                 else
-                                    span.avatar-status.badge-error  
-                            td.text-center                              
-                              span #{crecords}    
-                            td.text-center                              
-                              span #{nlexecution}                          
+                                    span.avatar-status.badge-danger  
+                            //- td.text-center                              
+                            //-   span #{crecords}    
+                            //- td.text-center                              
+                            //-   span #{nlexecution}                          
                     if (pages > 1)
                       ul.pagination.justify-content-center
                         != createPagination(pages, page)

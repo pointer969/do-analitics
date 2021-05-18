@@ -1,5 +1,6 @@
 var mongoose        = require("mongoose")
-var cars            = require("../models/Vehicle")
+var cars = require("../models/Vehicle")
+var carsMB = require("../models/VehicleMB")
 var User            = require("../models/User")
 var Message         = require('../models/Message')
 var intsvc          = require('../models/IntegrationSvc')
@@ -37,7 +38,19 @@ exports.list = function(req, res){
                 select: 'fullname -_id',
               })              
               .exec(function(err, carss){
-                cars.count().exec(function(err, ccount){  
+                  cars.count().exec(function (err, ccount) {
+                    var carList = [];
+                      for (var i = 0; i < carss.length; i++) {
+                        console.log('carss[i]=' + JSON.stringify(carss[i]));
+                        var carStatusInfo = getVehicleScoreData(carss[i]);
+                        var carInfo = {
+                            plate: carss[i].plate,
+                            vin: carss[i].vin,
+                            status: 'on'
+                          }
+                          console.log('carInfo =>' + JSON.stringify(carInfo))
+                        carList.push(carInfo)
+                    }
                     // intsvc
                     //     .find()
                     //     .limit(limit)
@@ -47,7 +60,7 @@ exports.list = function(req, res){
                                 res.render('index',
                                 { title: 'DriveOn Safe Score',
                                     params:{CurWStart:firstday, CurWEnd:lastday},  
-                                    carros: carss,
+                                    carros: carList,
                                     // services: svcs,
                                     user: req.user,                              
                                     ulogo: uavatar,
@@ -146,4 +159,53 @@ var getWeekVehicleDurations = function(dongles){
         })
 
         
+}
+
+
+function getVehicleScoreData (vehicleData) {
+    var returnValue = '';
+    carsMB
+            .find({ CHASSIS: vehicleData.vin })
+            .exec(function (err, vehicleInfo) {
+              var carId = vehicleInfo[0].inoid;
+              console.log('carId=>' + carId);
+              mongoose.connection.db.collection('do_sco_bha', function (err, collection) {
+                if (!err) {
+                  collection.distinct('Date', { vehicleID: carId }, function (err, daysLine) {
+                    mongoose.connection.db.collection('do_score_all', function (err, collectionScore) {
+                      if (!err) {
+                        collectionScore.find({ vehicleId: carId }).toArray(function (err, scoresinfo) {
+                            console.log('scoresinfo size=>' + (scoresinfo.length))
+                            //if (scoresinfo) {
+                                if (scoresinfo.length > 0) {
+                                    returnValue =  'on';
+                                } else {
+                                     returnValue =  'off';
+                                }
+                            // } else {
+                            //     return 'off';
+                            // }
+                          
+                        })
+                      } else {
+                          console.log('Falha na busca pela collection do_score_all');
+                          returnValue =  'off';
+                      }
+                      
+                    })
+                    
+                    
+                  })
+                } else {
+                    console.log('Falha na busca pela collection do_sco_bha');
+                    returnValue =  'off';
+                }
+                
+              })
+            })
+    
+    
+    return new Promise(result => {
+        result = returnValue 
+    });
 }

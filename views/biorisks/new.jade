@@ -7,7 +7,7 @@ block content
           li.breadcrumb-item Administração
           li.breadcrumb-item Configurações
           li.breadcrumb-item Parâmetros
-          li.breadcrumb-item.active Zonas de Insegurança
+          li.breadcrumb-item.active Zonas de Risco Ambiental
         .container-fluid
           .animated.fadeIn
             .row
@@ -18,7 +18,7 @@ block content
                       |  Nova Zona de Risco
                     .card-body                                              
                       != messages()
-                      form.form-horizontal(action='/georisks/save', method='post')
+                      form.form-horizontal(action='/biorisks/save', method='post')
                         .form-group
                           label.form-control-label(for='mapid') Map ID
                           .controls
@@ -69,5 +69,5 @@ block content
                         .form-actions
                           button.btn.btn-sm.primary(type='submit') Salvar
                           span
-                          a(href='/georisks') 
+                          a(href='/biorisks') 
                            button.btn.btn-sm.secondary(type='button') Cancelar                                                                       

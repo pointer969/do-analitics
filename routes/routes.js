@@ -10,7 +10,8 @@ var authority       = require("../controllers/authorityController")
 var profile         = require("../controllers/profileController")
 var customer        = require("../controllers/customerController")
 var carval          =  require("../controllers/calcvarController")
-var georisk         =  require("../controllers/georiskController")
+var georisk = require("../controllers/georiskController")
+var biorisk         =  require("../controllers/bioriskController")
 var eclass          =  require("../controllers/extensiveclassController")
 var evalo           =  require("../controllers/extensivevalueController")
 var drivebahavior   = require('../controllers/drivebehaviorController')
@@ -237,6 +238,25 @@ router.get('/georisks/edit/:id',require('permission')(['administrador','segurado
 router.post('/georisks/update/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  georisk.update)
 // Delete
 router.post('/georisks/delete/:id',require('permission')(['administrador','seguradora']), isLoggedIn, georisk.delete)
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+// ++++++++++++++++++++++ Bio Risks +++++++++++++++++++++++++++
+// List all georisk
+router.get('/biorisks',require('permission')(['administrador','seguradora']), isLoggedIn, biorisk.list)
+// Get single georisk by id
+router.get('/biorisks/show/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  biorisk.show)
+// Create georisk
+router.get('/biorisks/new', require('permission')(['administrador','seguradora']),isLoggedIn,  biorisk.create)
+// Save georisk
+router.post('/biorisks/save',require('permission')(['administrador','seguradora']), isLoggedIn,  biorisk.save)
+// Edit georisk
+router.get('/biorisks/edit/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  biorisk.edit)
+// Edit georisk
+router.post('/biorisks/update/:id',require('permission')(['administrador','seguradora']), isLoggedIn,  biorisk.update)
+// Delete
+router.post('/biorisks/delete/:id',require('permission')(['administrador','seguradora']), isLoggedIn, biorisk.delete)
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // / ++++++++++++++++++++++ Ext. Classes +++++++++++++++++++++++++++

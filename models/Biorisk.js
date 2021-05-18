@@ -3,7 +3,7 @@ var Schema    = mongoose.Schema
 var mongooseLogs = require('mongoose-activitylogs')
 
 // ZONAS DE RISCO
-var GEORISKSchema = new Schema({
+var BIORISKSchema = new Schema({
     mapid: {
         type: String,
         unique: true,
@@ -33,12 +33,12 @@ var GEORISKSchema = new Schema({
 }
 )
 
-GEORISKSchema.plugin(mongooseLogs, {
-    schemaName: "georisk",
+BIORISKSchema.plugin(mongooseLogs, {
+    schemaName: "biorisk",
     createAction: "created",
     updateAction: "updated",
     deleteAction: "deleted" 
   })
   
 
-module.exports =  mongoose.model('do_geo_m00', GEORISKSchema)
+module.exports =  mongoose.model('do_bio_m00', BIORISKSchema)

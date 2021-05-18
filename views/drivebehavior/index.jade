@@ -202,23 +202,27 @@ block content
                             tr
                               td.text-center(colspan='12') Selecione uma data:
                             tr
-                              td.text-center                              
-                                    | Antes
+                              td.text-center
+                                    input#totTimeline(type='hidden' value='#{count}')
+                                    input#prevTimeline(type='hidden' value='0')    
+                                    input#nextTimeline(type='hidden' value='9')                        
+                                    a(href='#' onclick='getBeforeDateforBehavior()') Anterior
                               each dtime, index in timeline
-                                if index < 10
                                   td.text-center       
                                     if (dSet ==  prettyDate(dtime, true))     
-                                      a.scorereload(href='#/#{prettyDate(dtime, true)}').bg-primary #{prettyDate(dtime, false)}
-                                    else                
-                                      a.scorereload(href='#/#{prettyDate(dtime, true)}') #{prettyDate(dtime, false)}
+                                      div(class="time-" + index)
+                                        a.scorereload(href='#/#{prettyDate(dtime, true)}').bg-primary #{prettyDate(dtime, false)}
+                                    else
+                                      div(class="time-" + index)              
+                                        a.scorereload(href='#/#{prettyDate(dtime, true)}') #{prettyDate(dtime, false)}
                               td.text-center                              
-                                    | Depois
+                                    a(href='#' onclick='getNextDateforBehavior()') Próxima
                       else 
                         table.table.table-striped
                           tbody
                             tr
                               td.text-center                              
-                                    | Sem dados
+                                    | Sem dados diários para expor
             .row#detailSlot1(style="display: none;")
               .col-md-12
                   .card

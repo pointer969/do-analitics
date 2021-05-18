@@ -26,8 +26,18 @@
 * MAIN NAVIGATION
 */
 
-$(document).ready(function($){
-
+$(document).ready(function ($) {
+  
+  /* Ajusta a exibição da lista de datas */
+  var Totdates = $('#totTimeline').val();
+  for (var i = 0; i <= Totdates; i++) {
+    if (i > 9) {
+      //$('.time-' + i).hide();
+      $('.time-' + i).parent().hide();
+    }
+      
+  }
+  /***************************************/
   // Add class .active to current link
   $.navigation.find('a').each(function(){
 
@@ -470,4 +480,36 @@ function getRefreshSlo1OverSpeed() {
         }
         
       })
+}
+
+
+function getBeforeDateforBehavior () {
+  var datefim = $('#nextTimeline').val();
+  var dateini = $('#prevTimeline').val();
+
+  $('.time-' + dateini).parent().hide();
+  $('.time-' + (parseInt(datefim) + 1)).parent().show();
+
+  var nvalueIni = parseInt(dateini) +1;
+  var nvalueFim = parseInt(datefim) +1;
+
+  $('#prevTimeline').attr('value',nvalueIni);
+  $('#nextTimeline').attr('value', nvalueFim);
+  
+}
+
+function getNextDateforBehavior () {
+  var datefim = $('#nextTimeline').val();
+  var dateini = $('#prevTimeline').val();
+  
+  $('.time-' + dateini).parent().hide();
+  $('.time-' + (parseInt(datefim) + 1)).parent().show();
+  
+
+  var nvalueIni = parseInt(dateini) +1;
+  var nvalueFim = parseInt(datefim) + 1;
+
+  $('#prevTimeline').attr('value',nvalueIni);
+  $('#nextTimeline').attr('value', nvalueFim);
+  
 }
